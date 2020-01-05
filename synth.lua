@@ -7,8 +7,9 @@ cv_to_hz = 440.0 / 8.0
 
 function run()
     vco2_detune = 2.0
-    hpf_cutoff = 1.0
-    vca_gain = 0.7
+    vcf_cutoff = 60.0
+    vcf_reso = 4.0
+    vca_gain = 2.0
 
     while true do
         update()
@@ -23,6 +24,7 @@ function update()
     update_vco1()
     update_vco2()
     update_mix()
+    update_vcf()
     update_hpf()
     update_vca()
 end
@@ -128,6 +130,45 @@ function update_mix()
 end
 
 --------------------------------------------------------------------------------
+-- VCF
+--------------------------------------------------------------------------------
+
+-- knobs
+vcf_cutoff = 0.0
+vcf_reso = 0.0
+
+-- internal
+vcf_2vt = 2.0 * 0.025 -- Vt = 25mV
+vcf_a = 0.0
+vcf_a_tanh = 0.0
+vcf_b = 0.0
+vcf_b_tanh = 0.0
+vcf_c = 0.0
+vcf_c_tanh = 0.0
+vcf_d = 0.0
+vcf_d_tanh = 0.0
+
+-- out
+vcf_out = 0.0
+
+-- https://web.archive.org/web/20060501012842/http://dafx04.na.infn.it/WebProc/Proc/P_061.pdf
+function update_vcf()
+    local cutoff = vcf_cutoff * cv_to_hz
+    local g = 1.0 - math.exp(-2.0 * math.pi * cutoff / sr)
+    local r = vcf_reso / 5.0
+    local x = mix_out - 4.0 * r * vcf_out
+    vcf_a_tanh = math.tanh(vcf_a / vcf_2vt)
+    vcf_a = vcf_a + vcf_2vt * g * (math.tanh(x / vcf_2vt) - vcf_a_tanh)
+    vcf_b_tanh = math.tanh(vcf_b / vcf_2vt)
+    vcf_b = vcf_b + vcf_2vt * g * (vcf_a_tanh - vcf_b_tanh)
+    vcf_c_tanh = math.tanh(vcf_c / vcf_2vt)
+    vcf_c = vcf_c + vcf_2vt * g * (vcf_b_tanh - vcf_c_tanh)
+    vcf_d_tanh = math.tanh(vcf_out / vcf_2vt)
+    vcf_d = vcf_out + vcf_2vt * g * (vcf_c_tanh - vcf_d_tanh)
+    vcf_out = vcf_d
+end
+
+--------------------------------------------------------------------------------
 -- HPF
 --------------------------------------------------------------------------------
 
@@ -144,8 +185,8 @@ hpf_out = 0.0
 function update_hpf()
     local b = hpf_cutoff / 5.0
     local a = 1.0 - b
-    hpf_low = a * hpf_low + b * mix_out
-    hpf_out = mix_out - hpf_low
+    hpf_low = a * hpf_low + b * vcf_out
+    hpf_out = vcf_out - hpf_low
 end
 
 --------------------------------------------------------------------------------
