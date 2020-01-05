@@ -6,7 +6,7 @@ cv_to_hz = 440.0 / 8.0
 kbd_gate = 0.0
 kbd_cv = 0.0
 
--- VCO 1 in
+-- VCO 1 knobs
 vco1_tune = 1.0
 vco1_detune = 0.0
 
@@ -14,7 +14,7 @@ vco1_detune = 0.0
 vco1_saw = 0.0
 vco1_square = 0.0
 
--- VCO 2 in
+-- VCO 2 knobs
 vco2_tune = 1.0
 vco2_detune = 0.0
 
@@ -25,7 +25,7 @@ vco2_square = 0.0
 -- MIX out
 mix_out = 0.0
 
--- VCA in
+-- VCA knobs
 vca_gain = 0.0
 
 -- VCA out
@@ -71,12 +71,46 @@ function update()
     vca_out = math.min(1.0, math.max(-1.0, mix_out * vca_gain))
 end
 
-kbd_gate = 5.0
-kbd_cv = 1.0
+--------------------------------------------------------------------------------
+-- KNOBS
+--------------------------------------------------------------------------------
+
 vco2_detune = 0.5
-vca_gain = 0.5
+vca_gain = 0.4
+
+--------------------------------------------------------------------------------
+-- MELODY
+--------------------------------------------------------------------------------
+
+next_kbd = coroutine.wrap(
+    function()
+        local D2 = 73.42 / cv_to_hz
+        local A1 = 55.00 / cv_to_hz
+        local F1 = 43.65 / cv_to_hz
+        local D1 = 36.71 / cv_to_hz
+        local samples_per_note = 0.2 * sr
+        local melody = {
+            D1, D1, D2, A1, D1, D1, F1, A1,
+            D1, D1, D2, A1, D1, D2, A1, A1
+        }
+        while true do
+            for i = 1, #melody do
+                for j = 1, samples_per_note do
+                    local gate = j < samples_per_note * 7 / 8 and 5.0 or 0.0
+                    local cv = melody[i]
+                    coroutine.yield(gate, cv)
+                end
+            end
+        end
+    end
+)
+
+--------------------------------------------------------------------------------
+-- RUN
+--------------------------------------------------------------------------------
 
 while true do
+    kbd_gate, kbd_cv = next_kbd()
     update()
     local sample = math.floor(128 + vca_out * 127)
     io.write(string.pack("<BB", sample, sample))
