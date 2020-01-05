@@ -39,6 +39,11 @@ function update()
         if vco1_saw >= 1 then
             vco1_saw = -1
         end
+        if vco1_saw > 0 then
+            vco1_square = 1
+        else
+            vco1_square = -1
+        end
     else
         vco1_saw = 0
     end
@@ -49,6 +54,11 @@ function update()
         vco2_saw = vco2_saw + step
         if vco2_saw >= 1 then
             vco2_saw = -1
+        end
+        if vco2_saw > 0 then
+            vco2_square = 1
+        else
+            vco2_square = -1
         end
     else
         vco2_saw = 0
