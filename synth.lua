@@ -12,6 +12,11 @@ function run()
     vcf_cutoff = 200.0
     vcf_reso = 0.7
     vca_env = 1.0
+    vca_env_ar = false
+    adsr_attack = 0.999
+    adsr_decay = 0.9995
+    adsr_sustain = 0.5
+    adsr_release = 0.99
 
     while true do
         update()
@@ -24,6 +29,7 @@ end
 function update()
     update_kbd()
     update_ar()
+    update_adsr()
     update_vco1()
     update_vco2()
     update_mix()
@@ -56,7 +62,7 @@ update_kbd = coroutine.wrap(
             for i = 1, #melody do
                 for j = 1, samples_per_note do
                     kbd_trigger = j == 1
-                    kbd_gate = j < samples_per_note * .8
+                    kbd_gate = j < samples_per_note * 7 / 8
                     kbd_cv = melody[i]
                     coroutine.yield()
                 end
@@ -82,6 +88,41 @@ function update_ar()
         ar_out = ar_attack * ar_out + (1 - ar_attack)
     else
         ar_out = ar_release * ar_out
+    end
+end
+
+--------------------------------------------------------------------------------
+-- ADSR
+--------------------------------------------------------------------------------
+
+-- knobs
+adsr_attack = 0.0
+adsr_sustain = 0.0
+adsr_decay = 0.0
+adsr_release = 0.0
+
+-- internal
+adsr_attack_active = false
+
+-- out
+adsr_out = 0.0
+
+function update_adsr()
+    if kbd_trigger then
+        adsr_attack_active = true
+        adsr_out = 0.0
+    end
+    if kbd_gate then
+        if adsr_attack_active then
+            adsr_out = adsr_attack * adsr_out + (1 - adsr_attack)
+            if adsr_out > .999 then
+                adsr_attack_active = false
+            end
+        else
+            adsr_out = adsr_decay * adsr_out + (1 - adsr_decay) * adsr_sustain
+        end
+    else
+        adsr_out = adsr_release * adsr_out
     end
 end
 
@@ -219,13 +260,15 @@ end
 
 -- knobs
 vca_env = 0.0
+vca_env_ar = true
 vca_gain = 0.0
 
 -- out
 vca_out = 0.0
 
 function update_vca()
-    vca_out = (vca_env * ar_out + vca_gain) * hpf_out
+    local env = vca_env_ar and ar_out or adsr_out
+    vca_out = (vca_env * env + vca_gain) * hpf_out
     vca_out = math.min(1.0, math.max(-1.0, vca_out))
 end
 
