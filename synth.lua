@@ -6,10 +6,11 @@ sr = 44100
 cv_to_hz = 440.0 / 8.0
 
 function run()
-    vco2_detune = 2.0
-    vcf_cutoff = 60.0
-    vcf_reso = 4.0
-    vca_gain = 2.0
+    vco2_tune = 3.0
+    vco2_sync = true
+    vcf_cutoff = 40.0
+    vcf_reso = 1.0
+    vca_gain = 4.0
 
     while true do
         update()
@@ -34,7 +35,8 @@ end
 --------------------------------------------------------------------------------
 
 -- out
-kbd_gate = 0.0
+kbd_trigger = true
+kbd_gate = false
 kbd_cv = 0.0
 
 update_kbd = coroutine.wrap(
@@ -51,7 +53,8 @@ update_kbd = coroutine.wrap(
         while true do
             for i = 1, #melody do
                 for j = 1, samples_per_note do
-                    kbd_gate = j < samples_per_note * 7 / 8 and 5.0 or 0.0
+                    kbd_trigger = j == 1
+                    kbd_gate = j < samples_per_note * 7 / 8
                     kbd_cv = melody[i]
                     coroutine.yield()
                 end
@@ -71,21 +74,25 @@ vco1_detune = 0.0
 -- out
 vco1_saw = 0.0
 vco1_square = 0.0
+vco1_sync = false
 
 function update_vco1()
-    if kbd_gate > 1 then
+    vco1_sync = false
+    if kbd_trigger then
+        vco1_sync = true
+        vco1_saw = -1
+        vco1_square = -1
+    elseif kbd_gate then
         local step = 2 * kbd_cv * cv_to_hz * (vco1_tune + vco1_detune / 100) / sr
         vco1_saw = vco1_saw + step
         if vco1_saw >= 1 then
             vco1_saw = -1
+            vco1_sync = true
         end
-        if vco1_saw > 0 then
-            vco1_square = 1
-        else
-            vco1_square = -1
-        end
+        vco1_square = vco1_saw > 0 and 1 or -1
     else
         vco1_saw = 0
+        vco1_square = 0
     end
 end
 
@@ -96,25 +103,27 @@ end
 -- knobs
 vco2_tune = 1.0
 vco2_detune = 0.0
+vco2_sync = false
 
 -- out
 vco2_saw = 0.0
 vco2_square = 0.0
 
 function update_vco2()
-    if kbd_gate > 1 then
-        local step = 2 * kbd_cv * cv_to_hz * (vco2_tune + vco2_detune / 100) / sr
-        vco2_saw = vco2_saw + step
-        if vco2_saw >= 1 then
+    if kbd_gate then
+        if vco2_sync and vco1_sync then
             vco2_saw = -1
-        end
-        if vco2_saw > 0 then
-            vco2_square = 1
         else
-            vco2_square = -1
+            local step = 2 * kbd_cv * cv_to_hz * (vco2_tune + vco2_detune / 100) / sr
+            vco2_saw = vco2_saw + step
+            if vco2_saw >= 1 then
+                vco2_saw = -1
+            end
         end
+        vco2_square = vco2_saw > 0 and 1 or -1
     else
         vco2_saw = 0
+        vco2_square = 0
     end
 end
 
