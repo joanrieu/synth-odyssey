@@ -11,12 +11,12 @@ function run()
     mix_vco2 = 1.0
     vcf_cutoff = 200.0
     vcf_reso = 0.7
-    vca_env = 1.0
+    vca_env = 4.0
     vca_env_ar = false
-    adsr_attack = 0.999
-    adsr_decay = 0.9995
-    adsr_sustain = 0.5
-    adsr_release = 0.99
+    adsr_attack = 0.1
+    adsr_decay = 0.5
+    adsr_sustain = 0.3
+    adsr_release = 0.1
 
     while true do
         update()
@@ -114,15 +114,21 @@ function update_adsr()
     end
     if kbd_gate then
         if adsr_attack_active then
-            adsr_out = adsr_attack * adsr_out + (1 - adsr_attack)
-            if adsr_out > .999 then
+            local t = 1.0 / (adsr_attack * sr)
+            local distance = 1.0
+            adsr_out = adsr_out + t * distance
+            if adsr_out > 1.0 then
                 adsr_attack_active = false
             end
         else
-            adsr_out = adsr_decay * adsr_out + (1 - adsr_decay) * adsr_sustain
+            local t = 1.0 / (adsr_decay * sr)
+            local distance = 1.0 - adsr_sustain
+            adsr_out = math.max(adsr_sustain, adsr_out - t * distance)
         end
     else
-        adsr_out = adsr_release * adsr_out
+        local t = 1.0 / (adsr_release * sr)
+        local distance = adsr_sustain
+        adsr_out = math.max(0.0, adsr_out - t * distance)
     end
 end
 
