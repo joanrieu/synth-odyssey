@@ -9,7 +9,7 @@ function run()
     vco2_tune = 3.0
     vco2_sync = true
     vcf_cutoff = 40.0
-    vcf_reso = 1.0
+    vcf_reso = 0.2
     vca_gain = 4.0
 
     while true do
@@ -164,8 +164,7 @@ vcf_out = 0.0
 function update_vcf()
     local cutoff = vcf_cutoff * cv_to_hz
     local g = 1.0 - math.exp(-2.0 * math.pi * cutoff / sr)
-    local r = vcf_reso / 5.0
-    local x = mix_out - 4.0 * r * vcf_out
+    local x = mix_out - 4.0 * vcf_reso * vcf_out
     vcf_a_tanh = math.tanh(vcf_a / vcf_2vt)
     vcf_a = vcf_a + vcf_2vt * g * (math.tanh(x / vcf_2vt) - vcf_a_tanh)
     vcf_b_tanh = math.tanh(vcf_b / vcf_2vt)
@@ -192,7 +191,7 @@ hpf_out = 0.0
 
 -- TODO: replace by a better filter
 function update_hpf()
-    local b = hpf_cutoff / 5.0
+    local b = hpf_cutoff
     local a = 1.0 - b
     hpf_low = a * hpf_low + b * vcf_out
     hpf_out = vcf_out - hpf_low
