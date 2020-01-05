@@ -6,13 +6,12 @@ sr = 44100
 cv_to_hz = 440.0 / 8.0
 
 function run()
-    ar_attack = 0.99
-    ar_release = 0.9999
-    vco2_tune = 3.0
-    vco2_sync = true
-    vcf_cutoff = 40.0
-    vcf_reso = 0.2
-    vca_env = 4.0
+    vco2_detune = 1.0
+    mix_vco1 = 1.0
+    mix_vco2 = 1.0
+    vcf_cutoff = 200.0
+    vcf_reso = 0.7
+    vca_env = 1.0
 
     while true do
         update()
@@ -48,7 +47,7 @@ update_kbd = coroutine.wrap(
         local A1 = 55.00 / cv_to_hz
         local F1 = 43.65 / cv_to_hz
         local D1 = 36.71 / cv_to_hz
-        local samples_per_note = 0.2 * sr
+        local samples_per_note = 0.4 * sr
         local melody = {
             D1, D1, D2, A1, D1, D1, F1, A1,
             D1, D1, D2, A1, D1, D2, A1, A1
@@ -57,7 +56,7 @@ update_kbd = coroutine.wrap(
             for i = 1, #melody do
                 for j = 1, samples_per_note do
                     kbd_trigger = j == 1
-                    kbd_gate = j < samples_per_note / 5
+                    kbd_gate = j < samples_per_note * .8
                     kbd_cv = melody[i]
                     coroutine.yield()
                 end
@@ -140,11 +139,19 @@ end
 -- MIXER
 --------------------------------------------------------------------------------
 
+-- knob
+mix_vco1 = 0.0
+mix_vco1_saw = true
+mix_vco2 = 0.0
+mix_vco2_saw = true
+
 -- out
 mix_out = 0.0
 
 function update_mix()
-    mix_out = vco1_saw * .7 + vco2_square * .3
+    local vco1 = mix_vco1 * (mix_vco1_saw and vco1_saw or vco1_square)
+    local vco2 = mix_vco2 * (mix_vco2_saw and vco2_saw or vco2_square)
+    mix_out = vco1 + vco2
 end
 
 --------------------------------------------------------------------------------
