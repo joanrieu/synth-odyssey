@@ -6,8 +6,9 @@ sr = 44100
 cv_to_hz = 440.0 / 8.0
 
 function run()
-    vco2_detune = 0.5
-    vca_gain = 0.4
+    vco2_detune = 2.0
+    hpf_cutoff = 1.0
+    vca_gain = 0.7
 
     while true do
         update()
@@ -22,6 +23,7 @@ function update()
     update_vco1()
     update_vco2()
     update_mix()
+    update_hpf()
     update_vca()
 end
 
@@ -122,7 +124,28 @@ end
 mix_out = 0.0
 
 function update_mix()
-    mix_out = (vco1_saw + vco2_saw) / 2
+    mix_out = vco1_saw * .7 + vco2_square * .3
+end
+
+--------------------------------------------------------------------------------
+-- HPF
+--------------------------------------------------------------------------------
+
+-- knobs
+hpf_cutoff = 0.0
+
+-- internal
+hpf_low = 0.0
+
+-- out
+hpf_out = 0.0
+
+-- TODO: replace by a better filter
+function update_hpf()
+    local b = hpf_cutoff / 5.0
+    local a = 1.0 - b
+    hpf_low = a * hpf_low + b * mix_out
+    hpf_out = mix_out - hpf_low
 end
 
 --------------------------------------------------------------------------------
@@ -136,7 +159,7 @@ vca_gain = 0.0
 vca_out = 0.0
 
 function update_vca()
-    vca_out = math.min(1.0, math.max(-1.0, mix_out * vca_gain))
+    vca_out = math.min(1.0, math.max(-1.0, hpf_out * vca_gain))
 end
 
 --------------------------------------------------------------------------------
