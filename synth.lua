@@ -6,17 +6,14 @@ sr = 44100
 cv_to_hz = 440.0 / 8.0
 
 function run()
-    vco2_detune = 1.0
+    adsr_decay = 0.5
+    vco2_detune = 2.0
     mix_vco1 = 1.0
     mix_vco2 = 1.0
-    vcf_cutoff = 200.0
-    vcf_reso = 0.7
+    vcf_cutoff = 300.0
+    vcf_reso = 0.2
+    vcf_env = 0.85
     vca_env = 4.0
-    vca_env_ar = false
-    adsr_attack = 0.1
-    adsr_decay = 0.5
-    adsr_sustain = 0.3
-    adsr_release = 0.1
 
     while true do
         update()
@@ -53,7 +50,7 @@ update_kbd = coroutine.wrap(
         local A1 = 55.00 / cv_to_hz
         local F1 = 43.65 / cv_to_hz
         local D1 = 36.71 / cv_to_hz
-        local samples_per_note = 0.4 * sr
+        local samples_per_note = 1.0 * sr
         local melody = {
             D1, D1, D2, A1, D1, D1, F1, A1,
             D1, D1, D2, A1, D1, D2, A1, A1
@@ -62,7 +59,7 @@ update_kbd = coroutine.wrap(
             for i = 1, #melody do
                 for j = 1, samples_per_note do
                     kbd_trigger = j == 1
-                    kbd_gate = j < samples_per_note * 7 / 8
+                    kbd_gate = j < samples_per_note
                     kbd_cv = melody[i]
                     coroutine.yield()
                 end
@@ -230,6 +227,8 @@ end
 -- knobs
 vcf_cutoff = 0.0
 vcf_reso = 0.0
+vcf_env = 0.0
+vcf_env_adsr = true
 
 -- internal
 vcf_2vt = 2.0 * 0.025 -- Vt = 25mV
@@ -245,9 +244,11 @@ vcf_d_tanh = 0.0
 -- out
 vcf_out = 0.0
 
--- https://web.archive.org/web/20060501012842/http://dafx04.na.infn.it/WebProc/Proc/P_061.pdf
 function update_vcf()
-    local cutoff = vcf_cutoff * cv_to_hz
+    local env = vcf_env * (vcf_env_adsr and adsr_out or ar_out)
+    local cutoff = (env + (1 - vcf_env)) * vcf_cutoff * cv_to_hz
+
+    -- https://web.archive.org/web/20060501012842/http://dafx04.na.infn.it/WebProc/Proc/P_061.pdf
     local g = 1.0 - math.exp(-2.0 * math.pi * cutoff / sr)
     local x = mix_out - 4.0 * vcf_reso * vcf_out
     vcf_a_tanh = math.tanh(vcf_a / vcf_2vt)
@@ -258,6 +259,7 @@ function update_vcf()
     vcf_c = vcf_c + vcf_2vt * g * (vcf_b_tanh - vcf_c_tanh)
     vcf_d_tanh = math.tanh(vcf_out / vcf_2vt)
     vcf_d = vcf_out + vcf_2vt * g * (vcf_c_tanh - vcf_d_tanh)
+    
     vcf_out = vcf_d
 end
 
