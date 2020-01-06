@@ -3,14 +3,15 @@
 --------------------------------------------------------------------------------
 
 sr = 44100
-cv_to_hz = 440.0 / 8.0
 
 function run()
     adsr_decay = 0.5
+    vco1_tune = 1.0
+    vco2_tune = 1.0
     vco2_detune = 2.0
     mix_vco1 = 1.0
     mix_vco2 = 1.0
-    vcf_cutoff = 300.0
+    vcf_cutoff = 16500.0
     vcf_reso = 0.2
     vcf_env = 0.85
     vca_env = 4.0
@@ -42,14 +43,14 @@ end
 -- out
 kbd_trigger = false
 kbd_gate = false
-kbd_cv = 0.0
+kbd_freq = 0.0
 
 update_kbd = coroutine.wrap(
     function()
-        local D2 = 73.42 / cv_to_hz
-        local A1 = 55.00 / cv_to_hz
-        local F1 = 43.65 / cv_to_hz
-        local D1 = 36.71 / cv_to_hz
+        local D2 = 73.42
+        local A1 = 55.00
+        local F1 = 43.65
+        local D1 = 36.71
         local samples_per_note = 1.0 * sr
         local melody = {
             D1, D1, D2, A1, D1, D1, F1, A1,
@@ -60,7 +61,7 @@ update_kbd = coroutine.wrap(
                 for j = 1, samples_per_note do
                     kbd_trigger = j == 1
                     kbd_gate = j < samples_per_note
-                    kbd_cv = melody[i]
+                    kbd_freq = melody[i]
                     coroutine.yield()
                 end
             end
@@ -156,7 +157,7 @@ end
 --------------------------------------------------------------------------------
 
 -- knobs
-vco1_tune = 1.0
+vco1_tune = 0.0
 vco1_detune = 0.0
 
 -- out
@@ -166,7 +167,7 @@ vco1_sync = false
 
 function update_vco1()
     vco1_sync = false
-    local step = 2 * kbd_cv * cv_to_hz * (vco1_tune + vco1_detune / 100) / sr
+    local step = 2 * kbd_freq * (vco1_tune + vco1_detune / 100) / sr
     vco1_saw = vco1_saw + step
     if vco1_saw >= 1 then
         vco1_saw = -1
@@ -180,7 +181,7 @@ end
 --------------------------------------------------------------------------------
 
 -- knobs
-vco2_tune = 1.0
+vco2_tune = 0.0
 vco2_detune = 0.0
 vco2_sync = false
 
@@ -192,7 +193,7 @@ function update_vco2()
     if vco2_sync and vco1_sync then
         vco2_saw = -1
     else
-        local step = 2 * kbd_cv * cv_to_hz * (vco2_tune + vco2_detune / 100) / sr
+        local step = 2 * kbd_freq * (vco2_tune + vco2_detune / 100) / sr
         vco2_saw = vco2_saw + step
         if vco2_saw >= 1 then
             vco2_saw = -1
@@ -246,7 +247,7 @@ vcf_out = 0.0
 
 function update_vcf()
     local env = vcf_env * (vcf_env_adsr and adsr_out or ar_out)
-    local cutoff = (env + (1 - vcf_env)) * vcf_cutoff * cv_to_hz
+    local cutoff = (env + (1 - vcf_env)) * vcf_cutoff
 
     -- https://web.archive.org/web/20060501012842/http://dafx04.na.infn.it/WebProc/Proc/P_061.pdf
     local g = 1.0 - math.exp(-2.0 * math.pi * cutoff / sr)
