@@ -20,9 +20,7 @@ function run()
 
     while true do
         update()
-        local sample = math.floor(128 + vca_out * 127)
-        io.write(string.pack("<BB", sample, sample))
-        io.flush()
+        play()
     end
 end
 
@@ -36,6 +34,13 @@ function update()
     update_vcf()
     update_hpf()
     update_vca()
+end
+
+function play()
+    local clipped = math.min(1.0, math.max(-1.0, vca_out))
+    local sample = math.floor(clipped * 2^31)
+    io.write(string.pack("<i4i4", sample, sample))
+    io.flush()
 end
 
 --------------------------------------------------------------------------------
@@ -335,7 +340,6 @@ vca_out = 0.0
 function update_vca()
     local env = vca_env_ar and ar_out or adsr_out
     vca_out = (vca_env * env + vca_gain) * hpf_out
-    vca_out = math.min(1.0, math.max(-1.0, vca_out))
 end
 
 --------------------------------------------------------------------------------
