@@ -102,33 +102,55 @@ adsr_decay = 0.0
 adsr_release = 0.0
 
 -- internal
-adsr_attack_active = false
+adsr_state = 0
+adsr_done = 0
+adsr_todo = 0
 
 -- out
 adsr_out = 0.0
 
 function update_adsr()
     if kbd_trigger then
-        adsr_attack_active = true
-        adsr_out = 0.0
+        adsr_state = 1
+        adsr_done = 0
+        adsr_todo = math.floor(adsr_attack * sr)
     end
-    if kbd_gate then
-        if adsr_attack_active then
-            local t = 1.0 / (adsr_attack * sr)
-            local distance = 1.0
-            adsr_out = adsr_out + t * distance
-            if adsr_out > 1.0 then
-                adsr_attack_active = false
-            end
+    if adsr_state == 1 then
+        if adsr_todo > 0 then
+            adsr_out = adsr_done / (adsr_done + adsr_todo)
         else
-            local t = 1.0 / (adsr_decay * sr)
-            local distance = 1.0 - adsr_sustain
-            adsr_out = math.max(adsr_sustain, adsr_out - t * distance)
+            adsr_state = 2
+            adsr_done = 0
+            adsr_todo = math.floor(adsr_decay * sr)
         end
+    end
+    if adsr_state == 2 then
+        if adsr_todo > 0 then
+            adsr_out = 1.0 - ((1.0 - adsr_sustain) * adsr_done / (adsr_done + adsr_todo))
+        else
+            adsr_state = 3
+        end
+    end
+    if adsr_state == 3 then
+        adsr_out = adsr_sustain
+    end
+    if not kbd_gate and adsr_state ~= 0 and adsr_state ~= 4 then
+        adsr_state = 4
+        adsr_done = 0
+        adsr_todo = math.floor(adsr_release * sr)
+    end
+    if adsr_state == 4 then
+        if adsr_todo > 0 then
+            adsr_out = adsr_sustain * adsr_todo / (adsr_done + adsr_todo)
+        else
+            adsr_state = 0
+        end
+    end
+    if adsr_state == 0 then
+        adsr_out = 0.0
     else
-        local t = 1.0 / (adsr_release * sr)
-        local distance = adsr_sustain
-        adsr_out = math.max(0.0, adsr_out - t * distance)
+        adsr_done = adsr_done + 1
+        adsr_todo = adsr_todo - 1
     end
 end
 
