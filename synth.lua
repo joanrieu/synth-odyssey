@@ -5,6 +5,8 @@
 sr = 44100
 
 function run()
+    ar_attack = 0.01
+    ar_release = 1.0
     adsr_decay = 0.5
     vco1_tune = 1.0
     vco2_tune = 1.0
@@ -60,7 +62,7 @@ update_kbd = coroutine.wrap(
             for i = 1, #melody do
                 for j = 1, samples_per_note do
                     kbd_trigger = j == 1
-                    kbd_gate = j < samples_per_note
+                    kbd_gate = j < samples_per_note / 2
                     kbd_freq = melody[i]
                     coroutine.yield()
                 end
@@ -77,15 +79,48 @@ update_kbd = coroutine.wrap(
 ar_attack = 0.0
 ar_release = 0.0
 
+-- internal
+ar_state = 0
+ar_done = 0
+ar_todo = 0
+
 -- out
 ar_out = 0.0
 
--- TODO: use sample rate in computation
+-- derived from update_adsr()
 function update_ar()
-    if kbd_gate then
-        ar_out = ar_attack * ar_out + (1 - ar_attack)
+    if kbd_trigger then
+        ar_state = 1
+        ar_done = 0
+        ar_todo = math.floor(ar_attack * sr)
+    end
+    if ar_state == 1 then
+        if ar_todo > 0 then
+            ar_out = ar_done / (ar_done + ar_todo)
+        else
+            ar_state = 3
+        end
+    end
+    if ar_state == 3 then
+        ar_out = 1.0
+    end
+    if not kbd_gate and ar_state ~= 0 and ar_state ~= 4 then
+        ar_state = 4
+        ar_done = 0
+        ar_todo = math.floor(ar_release * sr)
+    end
+    if ar_state == 4 then
+        if ar_todo > 0 then
+            ar_out = ar_todo / (ar_done + ar_todo)
+        else
+            ar_state = 0
+        end
+    end
+    if ar_state == 0 then
+        ar_out = 0.0
     else
-        ar_out = ar_release * ar_out
+        ar_done = ar_done + 1
+        ar_todo = ar_todo - 1
     end
 end
 
