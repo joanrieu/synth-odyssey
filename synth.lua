@@ -4,6 +4,7 @@ require("adsr")
 require("vco1")
 require("vco2")
 require("lfo")
+require("noise")
 require("mix")
 require("vcf")
 require("hpf")
@@ -22,6 +23,7 @@ vco2_lfo = .1
 lfo_freq = 10
 mix_vco1 = 1
 mix_vco2 = 1
+mix_noise_ring = 1
 vcf_cutoff = 4000
 vcf_reso = 0.2
 vcf_env = 0.85
@@ -34,6 +36,7 @@ function update()
     update_vco1()
     update_vco2()
     update_lfo()
+    update_noise()
     update_mix()
     update_vcf()
     update_hpf()
