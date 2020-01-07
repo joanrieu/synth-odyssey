@@ -6,17 +6,17 @@ sr = 44100
 
 function run()
     ar_attack = 0.01
-    ar_release = 1.0
+    ar_release = 1
     adsr_decay = 0.5
-    vco1_tune = 1.0
-    vco2_tune = 1.0
-    vco2_detune = 2.0
-    mix_vco1 = 1.0
-    mix_vco2 = 1.0
-    vcf_cutoff = 16500.0
+    vco1_tune = 1
+    vco2_tune = 1
+    vco2_detune = 2
+    mix_vco1 = 1
+    mix_vco2 = 1
+    vcf_cutoff = 16500
     vcf_reso = 0.2
     vcf_env = 0.85
-    vca_env = 4.0
+    vca_env = 4
 
     while true do
         update()
@@ -37,7 +37,7 @@ function update()
 end
 
 function play()
-    local clipped = math.min(1.0, math.max(-1.0, vca_out))
+    local clipped = math.min(1, math.max(-1, vca_out))
     local sample = math.floor(clipped * 2^31)
     io.write(string.pack("<i4i4", sample, sample))
     io.flush()
@@ -50,7 +50,7 @@ end
 -- out
 kbd_trigger = false
 kbd_gate = false
-kbd_freq = 0.0
+kbd_freq = 0
 
 update_kbd = coroutine.wrap(
     function()
@@ -58,7 +58,7 @@ update_kbd = coroutine.wrap(
         local A1 = 55.00
         local F1 = 43.65
         local D1 = 36.71
-        local samples_per_note = 1.0 * sr
+        local samples_per_note = 1 * sr
         local melody = {
             D1, D1, D2, A1, D1, D1, F1, A1,
             D1, D1, D2, A1, D1, D2, A1, A1
@@ -81,8 +81,8 @@ update_kbd = coroutine.wrap(
 --------------------------------------------------------------------------------
 
 -- knobs
-ar_attack = 0.0
-ar_release = 0.0
+ar_attack = 0
+ar_release = 0
 
 -- internal
 ar_state = 0
@@ -90,7 +90,7 @@ ar_done = 0
 ar_todo = 0
 
 -- out
-ar_out = 0.0
+ar_out = 0
 
 -- derived from update_adsr()
 function update_ar()
@@ -107,7 +107,7 @@ function update_ar()
         end
     end
     if ar_state == 3 then
-        ar_out = 1.0
+        ar_out = 1
     end
     if not kbd_gate and ar_state ~= 0 and ar_state ~= 4 then
         ar_state = 4
@@ -122,7 +122,7 @@ function update_ar()
         end
     end
     if ar_state == 0 then
-        ar_out = 0.0
+        ar_out = 0
     else
         ar_done = ar_done + 1
         ar_todo = ar_todo - 1
@@ -134,10 +134,10 @@ end
 --------------------------------------------------------------------------------
 
 -- knobs
-adsr_attack = 0.0
-adsr_sustain = 0.0
-adsr_decay = 0.0
-adsr_release = 0.0
+adsr_attack = 0
+adsr_sustain = 0
+adsr_decay = 0
+adsr_release = 0
 
 -- internal
 adsr_state = 0
@@ -145,7 +145,7 @@ adsr_done = 0
 adsr_todo = 0
 
 -- out
-adsr_out = 0.0
+adsr_out = 0
 
 function update_adsr()
     if kbd_trigger then
@@ -164,7 +164,7 @@ function update_adsr()
     end
     if adsr_state == 2 then
         if adsr_todo > 0 then
-            adsr_out = 1.0 - ((1.0 - adsr_sustain) * adsr_done / (adsr_done + adsr_todo))
+            adsr_out = 1 - ((1 - adsr_sustain) * adsr_done / (adsr_done + adsr_todo))
         else
             adsr_state = 3
         end
@@ -185,7 +185,7 @@ function update_adsr()
         end
     end
     if adsr_state == 0 then
-        adsr_out = 0.0
+        adsr_out = 0
     else
         adsr_done = adsr_done + 1
         adsr_todo = adsr_todo - 1
@@ -197,12 +197,12 @@ end
 --------------------------------------------------------------------------------
 
 -- knobs
-vco1_tune = 0.0
-vco1_detune = 0.0
+vco1_tune = 0
+vco1_detune = 0
 
 -- out
-vco1_saw = 0.0
-vco1_square = 0.0
+vco1_saw = 0
+vco1_square = 0
 vco1_sync = false
 
 function update_vco1()
@@ -221,13 +221,13 @@ end
 --------------------------------------------------------------------------------
 
 -- knobs
-vco2_tune = 0.0
-vco2_detune = 0.0
+vco2_tune = 0
+vco2_detune = 0
 vco2_sync = false
 
 -- out
-vco2_saw = 0.0
-vco2_square = 0.0
+vco2_saw = 0
+vco2_square = 0
 
 function update_vco2()
     if vco2_sync and vco1_sync then
@@ -247,13 +247,13 @@ end
 --------------------------------------------------------------------------------
 
 -- knob
-mix_vco1 = 0.0
+mix_vco1 = 0
 mix_vco1_saw = true
-mix_vco2 = 0.0
+mix_vco2 = 0
 mix_vco2_saw = true
 
 -- out
-mix_out = 0.0
+mix_out = 0
 
 function update_mix()
     local vco1 = mix_vco1 * (mix_vco1_saw and vco1_saw or vco1_square)
@@ -266,32 +266,32 @@ end
 --------------------------------------------------------------------------------
 
 -- knobs
-vcf_cutoff = 0.0
-vcf_reso = 0.0
-vcf_env = 0.0
+vcf_cutoff = 0
+vcf_reso = 0
+vcf_env = 0
 vcf_env_adsr = true
 
 -- internal
-vcf_2vt = 2.0 * 0.025 -- Vt = 25mV
-vcf_a = 0.0
-vcf_a_tanh = 0.0
-vcf_b = 0.0
-vcf_b_tanh = 0.0
-vcf_c = 0.0
-vcf_c_tanh = 0.0
-vcf_d = 0.0
-vcf_d_tanh = 0.0
+vcf_2vt = 2 * 0.025 -- Vt = 25mV
+vcf_a = 0
+vcf_a_tanh = 0
+vcf_b = 0
+vcf_b_tanh = 0
+vcf_c = 0
+vcf_c_tanh = 0
+vcf_d = 0
+vcf_d_tanh = 0
 
 -- out
-vcf_out = 0.0
+vcf_out = 0
 
 function update_vcf()
     local env = vcf_env * (vcf_env_adsr and adsr_out or ar_out)
     local cutoff = (env + (1 - vcf_env)) * vcf_cutoff
 
     -- https://web.archive.org/web/20060501012842/http://dafx04.na.infn.it/WebProc/Proc/P_061.pdf
-    local g = 1.0 - math.exp(-2.0 * math.pi * cutoff / sr)
-    local x = mix_out - 4.0 * vcf_reso * vcf_out
+    local g = 1 - math.exp(-2 * math.pi * cutoff / sr)
+    local x = mix_out - 4 * vcf_reso * vcf_out
     vcf_a_tanh = math.tanh(vcf_a / vcf_2vt)
     vcf_a = vcf_a + vcf_2vt * g * (math.tanh(x / vcf_2vt) - vcf_a_tanh)
     vcf_b_tanh = math.tanh(vcf_b / vcf_2vt)
@@ -309,16 +309,16 @@ end
 --------------------------------------------------------------------------------
 
 -- knobs
-hpf_cutoff = 0.0
+hpf_cutoff = 0
 
 -- internal
-hpf_sample = 0.0
+hpf_sample = 0
 
 -- out
-hpf_out = 0.0
+hpf_out = 0
 
 function update_hpf()
-    local rc = 1.0 / (2 * math.pi * hpf_cutoff)
+    local rc = 1 / (2 * math.pi * hpf_cutoff)
     local inf = 1 / 0
     local a = rc < inf and rc / (rc + 1 / sr) or 1
     local delta = vcf_out - hpf_sample
@@ -331,12 +331,12 @@ end
 --------------------------------------------------------------------------------
 
 -- knobs
-vca_env = 0.0
+vca_env = 0
 vca_env_ar = true
-vca_gain = 0.0
+vca_gain = 0
 
 -- out
-vca_out = 0.0
+vca_out = 0
 
 function update_vca()
     local env = vca_env_ar and ar_out or adsr_out
