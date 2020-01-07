@@ -312,17 +312,18 @@ end
 hpf_cutoff = 0.0
 
 -- internal
-hpf_low = 0.0
+hpf_sample = 0.0
 
 -- out
 hpf_out = 0.0
 
--- TODO: replace by a better filter (and use sample rate in computation)
 function update_hpf()
-    local b = hpf_cutoff
-    local a = 1.0 - b
-    hpf_low = a * hpf_low + b * vcf_out
-    hpf_out = vcf_out - hpf_low
+    local rc = 1.0 / (2 * math.pi * hpf_cutoff)
+    local inf = 1 / 0
+    local a = rc < inf and rc / (rc + 1 / sr) or 1
+    local delta = vcf_out - hpf_sample
+    hpf_sample = vcf_out
+    hpf_out = a * (hpf_out + delta)
 end
 
 --------------------------------------------------------------------------------
