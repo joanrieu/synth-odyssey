@@ -44,7 +44,7 @@ function update()
 end
 
 function play()
-    local clipped = math.min(1, math.max(-1, vca_out))
+    local clipped = (1 - 1e-6) * math.min(1, math.max(-1, vca_out))
     local sample = math.floor(clipped * 2^31)
     io.write(string.pack("<i4i4", sample, sample))
     io.flush()
