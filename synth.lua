@@ -12,22 +12,18 @@ require("vca")
 
 sr = 44100
 
-ar_attack = 0.01
-ar_release = 1
-adsr_decay = 0.5
-vco1_tune = 2
-vco1_lfo = .1
-vco2_tune = 2
-vco2_detune = 4
-vco2_lfo = .1
-lfo_freq = 10
+ar_release = 0.1
+adsr_decay = 0.1
+adsr_sustain = 0.2
+vco1_tune = 1
+vco2_tune = 1
+vco2_detune = math.pi
 mix_vco1 = 1
 mix_vco2 = 1
-mix_noise_ring = 1
-vcf_cutoff = 4000
+vcf_cutoff = 5000
 vcf_reso = 0.2
-vcf_env = 0.85
-vca_env = 4
+vcf_env = 0.9
+vca_env = 5
 
 function update()
     update_kbd()
