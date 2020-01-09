@@ -12,6 +12,7 @@ require("vca")
 
 sr = 44100
 
+kbd_portamento = 0.5
 ar_release = 0.1
 adsr_decay = 0.1
 adsr_sustain = 0.2
