@@ -9,8 +9,10 @@ require("mix")
 require("vcf")
 require("hpf")
 require("vca")
+require("pcm")
 
-sr = 44100
+oversampling = 2
+sr = 44100 * oversampling
 
 kbd_portamento = 0.5
 ar_release = 0.1
@@ -38,23 +40,9 @@ function update()
     update_vcf()
     update_hpf()
     update_vca()
+    update_pcm()
 end
 
-function init_io()
-    io.input():setvbuf("no")
-    io.output():setvbuf("no")
+while true do
+    update()
 end
-
-function write_output()
-    io.write(string.pack("<i4", math.min(2^31 - 1, math.max(-2^31, math.floor(vca_out * 2^31)))))
-end
-
-function run()
-    init_io()
-    while true do
-        update()
-        write_output()
-    end
-end
-
-run()
