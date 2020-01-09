@@ -39,14 +39,21 @@ function update()
     update_vca()
 end
 
-function play()
-    local clipped = (1 - 1e-6) * math.min(1, math.max(-1, vca_out))
-    local sample = math.floor(clipped * 2^31)
-    io.write(string.pack("<i4i4", sample, sample))
-    io.flush()
+function init_io()
+    io.input():setvbuf("no")
+    io.output():setvbuf("no")
 end
 
-while true do
-    update()
-    play()
+function write_output()
+    io.write(string.pack("<i4", math.min(2^31 - 1, math.max(-2^31, math.floor(vca_out * 2^31)))))
 end
+
+function run()
+    init_io()
+    while true do
+        update()
+        write_output()
+    end
+end
+
+run()
