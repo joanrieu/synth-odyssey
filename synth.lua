@@ -12,7 +12,7 @@ require("hpf")
 require("vca")
 require("pcm")
 
-oversampling = 2
+oversampling = 1
 sr = 44100 * oversampling
 
 kbd_portamento = 0.5
