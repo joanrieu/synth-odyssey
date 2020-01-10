@@ -22,10 +22,13 @@ adsr_sustain = 0.2
 vco1_tune = 1
 vco2_tune = 1
 vco2_detune = math.pi
+lfo_freq = math.pi
 mix_vco1 = 1
 mix_vco2 = 1
 vcf_cutoff = 5000
 vcf_reso = 0.2
+vcf_mod2 = 0.1
+vcf_mod2_sh = false
 vcf_env = 0.9
 vca_env = 5
 

@@ -5,6 +5,10 @@
 -- knobs
 vcf_cutoff = 1/0
 vcf_reso = 0
+vcf_mod1 = 0
+vcf_mod1_kbd = false
+vcf_mod2 = 0
+vcf_mod2_sh = true
 vcf_env = 0
 vcf_env_adsr = true
 
@@ -23,7 +27,10 @@ vcf_d_tanh = 0
 vcf_out = 0
 
 function update_vcf()
-    local env = vcf_env * (vcf_env_adsr and adsr_out or ar_out)
+    local env1 = vcf_mod1 * (vcf_mod1_kbd and error("VCF kbd mod unsupported") or sh_mix)
+    local env2 = vcf_mod2 * (vcf_mod2_sh and sh_out or lfo_sine)
+    local env3 = vcf_env * (vcf_env_adsr and adsr_out or ar_out)
+    local env = (env1 + env2 + env3) / math.max(1, vcf_mod1 + vcf_mod2 + vcf_env)
     local cutoff = (env + (1 - vcf_env)) * vcf_cutoff
 
     -- Non-Linear Digital Implementation of the Moog Ladder Filter
