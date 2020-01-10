@@ -17,10 +17,10 @@ vco1_pwm_is_lfo = true
 -- out
 vco1_saw = 0
 vco1_square = 0
-vco1_sync = false
+vco1_trigger = false
 
 function update_vco1()
-    vco1_sync = false
+    vco1_trigger = false
     local fm =
         vco1_fm1 * (vco1_fm1_is_lfo_sine and lfo_sine or lfo_square) +
         vco1_fm2 * (vco1_fm2_is_sh_out and sh_out or adsr_out)
@@ -29,7 +29,7 @@ function update_vco1()
     vco1_saw = vco1_saw + step
     if vco1_saw >= 1 then
         vco1_saw = -1
-        vco1_sync = true
+        vco1_trigger = true
     end
     local pw_center =
         vco1_pw * 2 - 1 +

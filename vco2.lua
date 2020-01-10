@@ -19,7 +19,7 @@ vco2_saw = 0
 vco2_square = 0
 
 function update_vco2()
-    if vco2_sync and vco1_sync then
+    if vco2_sync and vco1_trigger then
         vco2_saw = -1
     else
         local fm =
