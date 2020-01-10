@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 
 -- knobs
-vcf_cutoff = 0
+vcf_cutoff = 1/0
 vcf_reso = 0
 vcf_env = 0
 vcf_env_adsr = true
