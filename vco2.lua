@@ -11,6 +11,8 @@ vco2_fm1_is_lfo_sine = true
 vco2_fm2 = 0
 vco2_fm2_is_sh_out = true
 vco2_pw = 0.5
+vco2_pwm = 0
+vco2_pwm_is_lfo = true
 
 -- out
 vco2_saw = 0
@@ -29,5 +31,8 @@ function update_vco2()
             vco2_saw = -1
         end
     end
-    vco2_square = vco2_saw > vco2_pw * 2 - 1 and 1 or -1
+    local pw_center =
+        vco2_pw * 2 - 1 +
+        vco2_pwm * (vco2_pwm_is_lfo and lfo_sine or (adsr_out * 2 - 1))
+    vco2_square = vco2_saw > pw_center and 1 or -1
 end
