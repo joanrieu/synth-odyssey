@@ -5,6 +5,7 @@
 -- knobs
 ar_attack = 0
 ar_release = 0
+ar_kbd_trigger = true
 
 -- internal
 ar_state = 0
@@ -16,7 +17,9 @@ ar_out = 0
 
 -- derived from update_adsr()
 function update_ar()
-    if kbd_trigger then
+    local auto_trigger = (adsr_kbd_repeat and kbd_gate and lfo_trigger) or (not adsr_kbd_repeat and lfo_trigger)
+    local trigger = (ar_kbd_trigger and kbd_trigger) or (not ar_kbd_trigger and auto_trigger)
+    if trigger then
         ar_state = 1
         ar_done = 0
         ar_todo = math.floor(ar_attack * sr)
@@ -31,7 +34,7 @@ function update_ar()
     if ar_state == 3 then
         ar_out = 1
     end
-    if not kbd_gate and ar_state ~= 0 and ar_state ~= 4 then
+    if (ar_kbd_trigger and not kbd_gate and ar_state ~= 0 and ar_state ~= 4) or (not ar_kbd_trigger and ar_state == 3) then
         ar_state = 4
         ar_done = 0
         ar_todo = math.floor(ar_release * sr)

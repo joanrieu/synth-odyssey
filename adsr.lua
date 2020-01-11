@@ -7,6 +7,8 @@ adsr_attack = 0
 adsr_sustain = 0
 adsr_decay = 0
 adsr_release = 0
+adsr_kbd_trigger = true
+adsr_kbd_repeat = true
 
 -- internal
 adsr_state = 0
@@ -17,7 +19,9 @@ adsr_todo = 0
 adsr_out = 0
 
 function update_adsr()
-    if kbd_trigger then
+    local auto_trigger = (adsr_kbd_repeat and kbd_gate and lfo_trigger) or (not adsr_kbd_repeat and lfo_trigger)
+    local trigger = (adsr_kbd_trigger and kbd_trigger) or (not adsr_kbd_trigger and auto_trigger)
+    if trigger then
         adsr_state = 1
         adsr_done = 0
         adsr_todo = math.floor(adsr_attack * sr)
@@ -41,7 +45,7 @@ function update_adsr()
     if adsr_state == 3 then
         adsr_out = adsr_sustain
     end
-    if not kbd_gate and adsr_state ~= 0 and adsr_state ~= 4 then
+    if (adsr_kbd_trigger and not kbd_gate and adsr_state ~= 0 and adsr_state ~= 4) or (not adsr_kbd_trigger and adsr_state == 3) then
         adsr_state = 4
         adsr_done = 0
         adsr_todo = math.floor(adsr_release * sr)

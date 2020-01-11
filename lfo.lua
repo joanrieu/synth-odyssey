@@ -11,7 +11,7 @@ lfo_step = 0
 -- out
 lfo_sine = 0
 lfo_square = 0
-lfo_trigger = false
+lfo_trigger = true
 
 function update_lfo()
     lfo_step = lfo_step + 1

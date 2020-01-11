@@ -1,6 +1,6 @@
 require("kbd")
-require("ar")
 require("adsr")
+require("ar")
 require("vco1")
 require("vco2")
 require("lfo")
