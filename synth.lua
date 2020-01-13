@@ -32,22 +32,20 @@ vcf_mod2_sh = false
 vcf_env = 0.9
 vca_env = 5
 
-function update()
-    update_kbd()
-    update_ar()
-    update_adsr()
-    update_vco1()
-    update_vco2()
-    update_lfo()
-    update_noise()
-    update_sh()
-    update_mix()
-    update_vcf()
-    update_hpf()
-    update_vca()
-    update_pcm()
-end
-
-while true do
-    update()
+function update(count)
+    for i = 1, count do
+        update_kbd()
+        update_ar()
+        update_adsr()
+        update_vco1()
+        update_vco2()
+        update_lfo()
+        update_noise()
+        update_sh()
+        update_mix()
+        update_vcf()
+        update_hpf()
+        update_vca()
+        update_pcm()
+    end
 end
