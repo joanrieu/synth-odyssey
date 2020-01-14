@@ -30,7 +30,7 @@ void render() {
         luaL_dofile(L, "synth.lua");
     }
 
-    ImGui::Begin("VCO1");
+    ImGui::Begin("VCO 1");
     slider("vco1_tune", 0, 16, 2);
     slider("vco1_detune", 0, 16, 2);
     toggle("vco1_kbd");
@@ -43,7 +43,7 @@ void render() {
     toggle("vco1_pwm_is_lfo");
     ImGui::End();
 
-    ImGui::Begin("VCO2");
+    ImGui::Begin("VCO 2");
     slider("vco2_tune", 0, 16, 2);
     slider("vco2_detune", 0, 16, 2);
     slider("vco2_sync", 0, 1);
@@ -67,6 +67,42 @@ void render() {
     toggle("vcf_env_adsr");
     ImGui::End();
     
+    ImGui::Begin("LFO");
+    slider("lfo_freq", 0, 20, 2);
+    ImGui::End();
+    
+    ImGui::Begin("SAMPLE / HOLD");
+    slider("sh_vco1", 0, 1);
+    toggle("sh_vco1_saw");
+    slider("sh_noise", 0, 1);
+    toggle("sh_noise_gen");
+    toggle("sh_lfo_trigger");
+    slider("sh_lag", 0, 1);
+    ImGui::End();
+    
+    ImGui::Begin("NOISE");
+    toggle("noise_white");
+    ImGui::End();
+    
+    ImGui::Begin("MIXER");
+    slider("mix_vco1", 0, 1);
+    toggle("mix_vco1_saw");
+    slider("mix_vco2", 0, 1);
+    toggle("mix_vco2_saw");
+    slider("mix_noise_ring", 0, 1);
+    toggle("mix_noise");
+    ImGui::End();
+    
+    ImGui::Begin("HPF");
+    slider("hpf_cutoff", 0, 16000, 2);
+    ImGui::End();
+    
+    ImGui::Begin("AR");
+    slider("ar_attack", 0, 1);
+    slider("ar_release", 0, 1);
+    toggle("ar_kbd_trigger");
+    ImGui::End();
+
     ImGui::Begin("ADSR");
     slider("adsr_attack", 0, 1);
     slider("adsr_sustain", 0, 1);
@@ -74,6 +110,12 @@ void render() {
     slider("adsr_release", 0, 1);
     toggle("adsr_kbd_trigger");
     toggle("adsr_kbd_repeat");
+    ImGui::End();
+
+    ImGui::Begin("VCA");
+    slider("vca_env", 0, 1);
+    toggle("vca_env_ar");
+    slider("vca_gain", 0, 1);
     ImGui::End();
 
     lua_getglobal(L, "update");
