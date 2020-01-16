@@ -1,5 +1,18 @@
 #include <imgui.h>
+#include <GLFW/glfw3.h>
 #include <lua.hpp>
+
+#define KEY(name) GLFW_KEY_##name
+
+#define NOTE_D4 293.6648
+#define NOTE_C4 261.6256
+#define NOTE_B3 246.9417
+#define NOTE_A3 220.0000
+#define NOTE_G3 195.9977
+#define NOTE_F3 174.6141
+#define NOTE_E3 164.8138
+#define NOTE_D3 146.8324
+#define NOTE_C3 130.8128
 
 static lua_State* L;
 
@@ -20,6 +33,61 @@ void toggle(const char* name) {
     if (ImGui::Selectable(name, &value)) {
         lua_pushboolean(L, value);
         lua_setglobal(L, name);
+    }
+}
+
+namespace Keyboard {
+    void update(
+        int step,
+        bool new_trigger = false,
+        bool new_gate = false,
+        float new_frequency = 0
+    ) {
+        static bool trigger = false, gate = false;
+        static float frequency = 0;
+        switch (step) {
+            case 1:
+                trigger = false;
+                gate = false;
+                break;
+            case 2:
+                trigger = trigger || new_trigger;
+                gate = gate || new_gate;
+                frequency = new_gate ? new_frequency : frequency;
+                break;
+            case 3:
+                if (trigger) {
+                    lua_pushboolean(L, false);
+                    lua_setglobal(L, "kbd_sequencer");
+                }
+                lua_pushboolean(L, trigger);
+                lua_setglobal(L, "kbd_trigger");
+                lua_pushboolean(L, gate);
+                lua_setglobal(L, "kbd_gate");
+                lua_pushnumber(L, frequency);
+                lua_setglobal(L, "kbd_freq_target");
+                lua_getglobal(L, "update");
+                lua_pushnumber(L, trigger ? 1 : 2048);
+                lua_call(L, 1, 0);
+                break;
+        }
+    }
+
+    void Begin() {
+        update(1);
+    }
+
+    void Note(int key, float frequency) {
+        update(
+            2,
+            ImGui::IsKeyPressed(key, false),
+            ImGui::IsKeyDown(key),
+            frequency
+        );
+    }
+
+    void End() {
+        update(3);
     }
 }
 
@@ -66,11 +134,11 @@ void render() {
     slider("vcf_env", 0, 1);
     toggle("vcf_env_adsr");
     ImGui::End();
-    
+
     ImGui::Begin("LFO");
     slider("lfo_freq", 0, 20, 2);
     ImGui::End();
-    
+
     ImGui::Begin("SAMPLE / HOLD");
     slider("sh_vco1", 0, 1);
     toggle("sh_vco1_saw");
@@ -79,11 +147,11 @@ void render() {
     toggle("sh_lfo_trigger");
     slider("sh_lag", 0, 1);
     ImGui::End();
-    
+
     ImGui::Begin("NOISE");
     toggle("noise_white");
     ImGui::End();
-    
+
     ImGui::Begin("MIXER");
     slider("mix_vco1", 0, 1);
     toggle("mix_vco1_saw");
@@ -92,11 +160,11 @@ void render() {
     slider("mix_noise_ring", 0, 1);
     toggle("mix_noise");
     ImGui::End();
-    
+
     ImGui::Begin("HPF");
     slider("hpf_cutoff", 0, 16000, 2);
     ImGui::End();
-    
+
     ImGui::Begin("AR");
     slider("ar_attack", 0, 1);
     slider("ar_release", 0, 1);
@@ -118,7 +186,20 @@ void render() {
     slider("vca_gain", 0, 1);
     ImGui::End();
 
-    lua_getglobal(L, "update");
-    lua_pushnumber(L, 4096);
-    lua_call(L, 1, 0);
+    ImGui::Begin("KEYBOARD");
+    slider("kbd_portamento", 0, 1);
+    slider("kbd_transpose", -2, 2);
+    toggle("kbd_sequencer");
+    Keyboard::Begin();
+    Keyboard::Note(KEY(A), NOTE_C3);
+    Keyboard::Note(KEY(S), NOTE_D3);
+    Keyboard::Note(KEY(D), NOTE_E3);
+    Keyboard::Note(KEY(F), NOTE_F3);
+    Keyboard::Note(KEY(G), NOTE_G3);
+    Keyboard::Note(KEY(H), NOTE_A3);
+    Keyboard::Note(KEY(J), NOTE_B3);
+    Keyboard::Note(KEY(K), NOTE_C4);
+    Keyboard::Note(KEY(L), NOTE_D4);
+    Keyboard::End();
+    ImGui::End();
 }

@@ -5,6 +5,10 @@
 -- knobs
 kbd_portamento = 0
 kbd_transpose = 0
+kbd_sequencer = true
+
+-- internal
+kbd_freq_target = 0
 
 -- out
 kbd_trigger = false
@@ -27,11 +31,14 @@ update_kbd = coroutine.wrap(
         while true do
             for i = 1, #melody do
                 for j = 1, samples_per_note do
-                    kbd_trigger = j == 1
-                    kbd_gate = j < samples_per_note
+                    if kbd_sequencer then
+                        kbd_trigger = j == 1
+                        kbd_gate = j < samples_per_note
+                        kbd_freq_target = melody[i]
+                    end
                     local a = 1 - 10 ^ (-2 - kbd_portamento * sr / 2e4)
                     local transpose = kbd_transpose >= 0 and 2 ^ kbd_transpose or 1 / 2 ^ -kbd_transpose
-                    kbd_freq = a * kbd_freq + (1 - a) * melody[i] * transpose
+                    kbd_freq = a * kbd_freq + (1 - a) * kbd_freq_target * transpose
                     coroutine.yield()
                 end
             end
