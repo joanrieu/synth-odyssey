@@ -12,11 +12,6 @@ void update_hpf();
 void update_vca();
 void update_pcm();
 
-int
-oversampling = 1;
-float
-sr = 44100 * oversampling;
-
 void update() {
     update_kbd();
     update_ar();
