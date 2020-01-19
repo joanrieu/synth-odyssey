@@ -4,15 +4,23 @@
 
 #define KEY(name) GLFW_KEY_##name
 
-#define NOTE_D4 293.6648
-#define NOTE_C4 261.6256
-#define NOTE_B3 246.9417
-#define NOTE_A3 220.0000
-#define NOTE_G3 195.9977
-#define NOTE_F3 174.6141
-#define NOTE_E3 164.8138
-#define NOTE_D3 146.8324
-#define NOTE_C3 130.8128
+struct Note {
+    const char* name;
+    float frequency;
+    int key;
+};
+
+const Note notes[] = {
+    { "C3", 130.8128, GLFW_KEY_A },
+    { "D3", 146.8324, GLFW_KEY_S },
+    { "E3", 164.8138, GLFW_KEY_D },
+    { "F3", 174.6141, GLFW_KEY_F },
+    { "G3", 195.9977, GLFW_KEY_G },
+    { "A3", 220.0000, GLFW_KEY_H },
+    { "B3", 246.9417, GLFW_KEY_J },
+    { "C4", 261.6256, GLFW_KEY_K },
+    { "D4", 293.6648, GLFW_KEY_L },
+};
 
 extern float
 sr,
@@ -90,24 +98,32 @@ void toggle(const char* name, bool* value) {
     ImGui::Selectable(name, value);
 }
 
-namespace Keyboard {
-    void Begin() {
-        kbd_trigger = false;
-        kbd_gate = false;
-    }
+void keyboard() {
+    kbd_trigger = false;
+    kbd_gate = false;
 
-    void Note(int key, float frequency) {
-        if (ImGui::IsKeyPressed(key, false)) {
+    for (const auto& note : notes) {
+        const auto size = ImVec2(130, 130);
+        ImGui::Button(note.name, size);
+        ImGui::SameLine();
+
+        if (
+            ImGui::IsKeyPressed(note.key, false) ||
+            ImGui::IsItemActivated()
+        ) {
             kbd_trigger = true;
         }
-        if (ImGui::IsKeyDown(key)) {
+
+        if (
+            ImGui::IsKeyDown(note.key) ||
+            ImGui::IsItemActive()
+        ) {
             kbd_gate = true;
-            kbd_freq_target = frequency;
+            kbd_freq_target = note.frequency;
         }
     }
 
-    void End() {
-    }
+    ImGui::NewLine();
 }
 
 void render() {
@@ -224,17 +240,7 @@ void render() {
     slider("kbd_portamento", &kbd_portamento, 0, 1);
     slider("kbd_transpose", &kbd_transpose, -2, 2);
     toggle("kbd_sequencer", &kbd_sequencer);
-    Keyboard::Begin();
-    Keyboard::Note(KEY(A), NOTE_C3);
-    Keyboard::Note(KEY(S), NOTE_D3);
-    Keyboard::Note(KEY(D), NOTE_E3);
-    Keyboard::Note(KEY(F), NOTE_F3);
-    Keyboard::Note(KEY(G), NOTE_G3);
-    Keyboard::Note(KEY(H), NOTE_A3);
-    Keyboard::Note(KEY(J), NOTE_B3);
-    Keyboard::Note(KEY(K), NOTE_C4);
-    Keyboard::Note(KEY(L), NOTE_D4);
-    Keyboard::End();
+    keyboard();
     ImGui::End();
 
     int samples = sr * ImGui::GetIO().DeltaTime;
