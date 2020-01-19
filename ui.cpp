@@ -90,6 +90,29 @@ kbd_sequencer;
 
 extern void update();
 
+void style() {
+    auto& style = ImGui::GetStyle();
+    style.WindowRounding = 2;
+    style.WindowTitleAlign = ImVec2(.5, .5);
+    style.Colors[ImGuiCol_TitleBg] =
+    style.Colors[ImGuiCol_TitleBgActive] =
+        ImColor(0, 0, 0, 0);
+}
+
+void decoration() {
+    const auto fg = ImGui::GetForegroundDrawList();
+    const auto p_min = ImVec2(0, 0);
+    const auto p_max = ImGui::GetIO().DisplaySize;
+    fg->AddRectFilledMultiColor(
+        p_min,
+        p_max,
+        ImColor(255, 255, 255, 25),
+        ImColor(255, 255, 255, 50),
+        ImColor(255, 255, 255, 25),
+        ImColor(255, 255, 255, 50)
+    );
+}
+
 void slider(const char* name, float* value, const float min, const float max, const float power = 1.0f) {
     ImGui::SliderScalar(name, ImGuiDataType_Float, value, &min, &max, NULL, power);
 }
@@ -102,10 +125,10 @@ void keyboard() {
     kbd_trigger = false;
     kbd_gate = false;
 
+    ImGui::NewLine();
     for (const auto& note : notes) {
-        const auto size = ImVec2(130, 130);
-        ImGui::Button(note.name, size);
-        ImGui::SameLine();
+        ImGui::SameLine(0, 0);
+        ImGui::Button(note.name, ImVec2(130, 130));
 
         if (
             ImGui::IsKeyPressed(note.key, false) ||
@@ -122,8 +145,6 @@ void keyboard() {
             kbd_freq_target = note.frequency;
         }
     }
-
-    ImGui::NewLine();
 }
 
 void render() {
@@ -146,13 +167,17 @@ void render() {
         vcf_mod2_sh = false;
         vcf_env = 0.9;
         vca_env = 5;
+
+        style();
     }
 
-    const auto window_flags =
+    static const auto window_flags =
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_AlwaysAutoResize;
+
+    decoration();
 
     ImGui::Begin("VCO 1", NULL, window_flags);
     slider("vco1_tune", &vco1_tune, 0, 16, 2);
@@ -244,7 +269,9 @@ void render() {
 
     ImGui::Begin("KEYBOARD", NULL, window_flags);
     slider("kbd_portamento", &kbd_portamento, 0, 1);
+    ImGui::SameLine(0, ImGui::GetStyle().IndentSpacing);
     slider("kbd_transpose", &kbd_transpose, -2, 2);
+    ImGui::SameLine(0, ImGui::GetStyle().IndentSpacing);
     toggle("kbd_sequencer", &kbd_sequencer);
     keyboard();
     ImGui::End();
