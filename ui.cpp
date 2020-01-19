@@ -148,7 +148,13 @@ void render() {
         vca_env = 5;
     }
 
-    ImGui::Begin("VCO 1");
+    const auto window_flags =
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_AlwaysAutoResize;
+
+    ImGui::Begin("VCO 1", NULL, window_flags);
     slider("vco1_tune", &vco1_tune, 0, 16, 2);
     slider("vco1_detune", &vco1_detune, 0, 16, 2);
     toggle("vco1_kbd", &vco1_kbd);
@@ -161,7 +167,7 @@ void render() {
     toggle("vco1_pwm_is_lfo", &vco1_pwm_is_lfo);
     ImGui::End();
 
-    ImGui::Begin("VCO 2");
+    ImGui::Begin("VCO 2", NULL, window_flags);
     slider("vco2_tune", &vco2_tune, 0, 16, 2);
     slider("vco2_detune", &vco2_detune, 0, 16, 2);
     toggle("vco2_sync", &vco2_sync);
@@ -174,7 +180,7 @@ void render() {
     toggle("vco2_pwm_is_lfo", &vco2_pwm_is_lfo);
     ImGui::End();
 
-    ImGui::Begin("VCF");
+    ImGui::Begin("VCF", NULL, window_flags);
     slider("vcf_cutoff", &vcf_cutoff, 0, 16000, 2);
     slider("vcf_reso", &vcf_reso, 0, 100, 2);
     slider("vcf_mod1", &vcf_mod1, 0, 1);
@@ -185,11 +191,11 @@ void render() {
     toggle("vcf_env_adsr", &vcf_env_adsr);
     ImGui::End();
 
-    ImGui::Begin("LFO");
+    ImGui::Begin("LFO", NULL, window_flags);
     slider("lfo_freq", &lfo_freq, 0, 20, 2);
     ImGui::End();
 
-    ImGui::Begin("SAMPLE / HOLD");
+    ImGui::Begin("SAMPLE / HOLD", NULL, window_flags);
     slider("sh_vco1", &sh_vco1, 0, 1);
     toggle("sh_vco1_saw", &sh_vco1_saw);
     slider("sh_noise", &sh_noise, 0, 1);
@@ -198,11 +204,11 @@ void render() {
     slider("sh_lag", &sh_lag, 0, 1);
     ImGui::End();
 
-    ImGui::Begin("NOISE");
+    ImGui::Begin("NOISE", NULL, window_flags);
     toggle("noise_white", &noise_white);
     ImGui::End();
 
-    ImGui::Begin("MIXER");
+    ImGui::Begin("MIXER", NULL, window_flags);
     slider("mix_vco1", &mix_vco1, 0, 1);
     toggle("mix_vco1_saw", &mix_vco1_saw);
     slider("mix_vco2", &mix_vco2, 0, 1);
@@ -211,17 +217,17 @@ void render() {
     toggle("mix_noise", &mix_noise);
     ImGui::End();
 
-    ImGui::Begin("HPF");
+    ImGui::Begin("HPF", NULL, window_flags);
     slider("hpf_cutoff", &hpf_cutoff, 0, 16000, 2);
     ImGui::End();
 
-    ImGui::Begin("AR");
+    ImGui::Begin("AR", NULL, window_flags);
     slider("ar_attack", &ar_attack, 0, 1);
     slider("ar_release", &ar_release, 0, 1);
     toggle("ar_kbd_trigger", &ar_kbd_trigger);
     ImGui::End();
 
-    ImGui::Begin("ADSR");
+    ImGui::Begin("ADSR", NULL, window_flags);
     slider("adsr_attack", &adsr_attack, 0, 1);
     slider("adsr_sustain", &adsr_sustain, 0, 1);
     slider("adsr_decay", &adsr_decay, 0, 1);
@@ -230,13 +236,13 @@ void render() {
     toggle("adsr_kbd_repeat", &adsr_kbd_repeat);
     ImGui::End();
 
-    ImGui::Begin("VCA");
+    ImGui::Begin("VCA", NULL, window_flags);
     slider("vca_env", &vca_env, 0, 1);
     toggle("vca_env_ar", &vca_env_ar);
     slider("vca_gain", &vca_gain, 0, 1);
     ImGui::End();
 
-    ImGui::Begin("KEYBOARD");
+    ImGui::Begin("KEYBOARD", NULL, window_flags);
     slider("kbd_portamento", &kbd_portamento, 0, 1);
     slider("kbd_transpose", &kbd_transpose, -2, 2);
     toggle("kbd_sequencer", &kbd_sequencer);
