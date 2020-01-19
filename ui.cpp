@@ -95,7 +95,7 @@ void slider(const char* name, float* value, const float min, const float max, co
 }
 
 void toggle(const char* name, bool* value) {
-    ImGui::Selectable(name, value);
+    ImGui::Checkbox(name, value);
 }
 
 void keyboard() {
