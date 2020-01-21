@@ -145,10 +145,8 @@ void keyboard() {
     }
 }
 
-void render() {
-    static bool is_init = false;
-    if (!is_init) {
-        is_init = true;
+void patch() {
+    if (ImGui::Button("Load")) {
         kbd_portamento = 0.5;
         ar_release = 0.1;
         adsr_decay = 0.1;
@@ -166,7 +164,9 @@ void render() {
         vcf_env = 0.9;
         vca_env = 5;
     }
+}
 
+void render() {
     static const auto window_flags =
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoMove |
@@ -271,5 +271,9 @@ void render() {
     ImGui::SameLine(0, ImGui::GetStyle().IndentSpacing);
     toggle("kbd_sequencer", &kbd_sequencer);
     keyboard();
+    ImGui::End();
+
+    ImGui::Begin("PATCH", NULL, window_flags);
+    patch();
     ImGui::End();
 }

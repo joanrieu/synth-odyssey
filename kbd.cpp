@@ -14,7 +14,7 @@ float
 kbd_portamento = 0,
 kbd_transpose = 0;
 bool
-kbd_sequencer = true;
+kbd_sequencer = false;
 
 // internal
 float
