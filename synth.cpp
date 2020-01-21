@@ -10,7 +10,6 @@ void update_mix();
 void update_vcf();
 void update_hpf();
 void update_vca();
-void update_pcm();
 
 void update() {
     update_kbd();
@@ -25,5 +24,4 @@ void update() {
     update_vcf();
     update_hpf();
     update_vca();
-    update_pcm();
 }

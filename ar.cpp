@@ -5,7 +5,7 @@
 #include <cmath>
 
 // in
-extern float
+extern unsigned
 sr;
 extern bool
 adsr_kbd_repeat,

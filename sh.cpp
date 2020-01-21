@@ -6,8 +6,9 @@
 #include <algorithm>
 
 // in
+extern unsigned
+sr;
 extern float
-sr,
 vco1_saw,
 vco1_square,
 noise_out,

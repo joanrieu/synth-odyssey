@@ -6,7 +6,7 @@
 #include "coroutines.h"
 
 // in
-extern float
+extern unsigned
 sr;
 
 // knobs

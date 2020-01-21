@@ -6,8 +6,9 @@
 #include <algorithm>
 
 // in
+extern unsigned
+sr;
 extern float
-sr,
 sh_mix,
 sh_out,
 lfo_sine,

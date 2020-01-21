@@ -1,4 +1,3 @@
-#include <cmath>
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 
@@ -23,7 +22,6 @@ const Note notes[] = {
 };
 
 extern float
-sr,
 kbd_freq_target,
 vco1_tune,
 vco1_detune,
@@ -157,8 +155,8 @@ void render() {
         adsr_sustain = 0.2;
         vco1_tune = 1;
         vco2_tune = 1;
-        vco2_detune = M_PI;
-        lfo_freq = M_PI;
+        vco2_detune = 3.14;
+        lfo_freq = 3.14;
         mix_vco1 = 1;
         mix_vco2 = 1;
         vcf_cutoff = 5000;
@@ -167,8 +165,6 @@ void render() {
         vcf_mod2_sh = false;
         vcf_env = 0.9;
         vca_env = 5;
-
-        style();
     }
 
     static const auto window_flags =
@@ -177,6 +173,7 @@ void render() {
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_AlwaysAutoResize;
 
+    style();
     decoration();
 
     ImGui::Begin("VCO 1", NULL, window_flags);
@@ -275,8 +272,4 @@ void render() {
     toggle("kbd_sequencer", &kbd_sequencer);
     keyboard();
     ImGui::End();
-
-    int samples = sr * ImGui::GetIO().DeltaTime;
-    for (int i = 0; i < samples; ++i)
-        update();
 }
