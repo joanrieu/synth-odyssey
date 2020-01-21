@@ -1,7 +1,6 @@
 #include <cmath>
 #include <alsa/asoundlib.h>
 
-void ui();
 void update();
 
 unsigned sr = 44100;
@@ -9,7 +8,7 @@ extern float vca_out;
 
 #define CHECK(pcm_op) if (pcm_op < 0) { abort(); }
 
-int main() {
+void* driver(void*) {
 	snd_pcm_t *pcm;
     snd_pcm_hw_params_t *params;
     CHECK(snd_pcm_open(&pcm, "default", SND_PCM_STREAM_PLAYBACK, 0));
@@ -19,6 +18,8 @@ int main() {
     CHECK(snd_pcm_hw_params_set_format(pcm, params, SND_PCM_FORMAT_S32));
     CHECK(snd_pcm_hw_params_set_channels(pcm, params, 1));
     CHECK(snd_pcm_hw_params_set_rate_near(pcm, params, &sr, 0));
+    unsigned delay_us = 10000;
+    CHECK(snd_pcm_hw_params_set_buffer_time_near(pcm, params, &delay_us, 0));
     CHECK(snd_pcm_hw_params(pcm, params));
 
 	snd_pcm_uframes_t frames;
