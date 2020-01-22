@@ -6,23 +6,28 @@
 
 #include "synth.hpp"
 
+#define C3 130.8128
+#define D3 146.8324
+#define E3 164.8138
+#define F3 174.6141
+#define G3 195.9977
+#define A3 220.0000
+#define B3 246.9417
+#define C4 261.6256
+#define D4 293.6648
+
 void Synth::update_kbd() {
     static int i, j;
     float a, transpose;
-    
-    float D2 = 73.42;
-    float A1 = 55.00;
-    float F1 = 43.65;
-    float D1 = 36.71;
     float samples_per_note = 0.18 * sr;
     float melody[] = {
-        A1, A1, A1, A1, A1, A1, A1, A1, A1, A1, A1, A1, A1, A1, A1, A1,
-        F1, F1, F1, F1, F1, F1, F1, F1, F1, F1, F1, F1, F1, F1, F1, F1,
-        D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1,
-        D2, D2, D2, D2, D2, D2, D2, D2, D2, D2, D2, D2, D2, D2, D2, D2,
+        A3, A3, A3, A3, A3, A3, A3, A3, A3, A3, A3, A3, A3, A3, A3, A3,
+        F3, F3, F3, F3, F3, F3, F3, F3, F3, F3, F3, F3, F3, F3, F3, F3,
+        D3, D3, D3, D3, D3, D3, D3, D3, D3, D3, D3, D3, D3, D3, D3, D3,
+        D4, D4, D4, D4, D4, D4, D4, D4, D4, D4, D4, D4, D4, D4, D4, D4,
         0
     };
-    
+
     crBegin(kbd.state);
     while (true) {
         for (i = 0; melody[i]; ++i) {

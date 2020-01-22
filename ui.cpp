@@ -104,6 +104,7 @@ void keyboard(Synth& synth) {
 void patch(Synth& synth) {
     if (ImGui::Button("Load")) {
         synth.kbd.portamento = 0.5;
+        synth.kbd.transpose = -2;
         synth.ar.release = 0.1;
         synth.adsr.decay = 0.1;
         synth.adsr.sustain = 0.2;
