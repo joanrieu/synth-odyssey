@@ -32,6 +32,18 @@ void style() {
         ImColor(0, 0, 0, 0);
 }
 
+void style_key(bool active) {
+    auto white = ImColor(255, 255, 255, 255).Value;
+    auto grey = ImColor(200, 200, 200, 255).Value;
+    auto color = active ? grey : white;
+    ImGui::PushStyleColor(ImGuiCol_Button, color);
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, grey);
+}
+
+void unstyle_key() {
+    ImGui::PopStyleColor(2);
+}
+
 void decoration() {
     const auto fg = ImGui::GetForegroundDrawList();
     const auto p_min = ImVec2(0, 0);
@@ -55,29 +67,38 @@ void toggle(const char* name, bool* value) {
 }
 
 void keyboard(Synth& synth) {
-    synth.kbd.trigger = false;
-    synth.kbd.gate = false;
+    float freq = synth.kbd.freq_target;
+    bool trigger = false, gate = false;
 
     ImGui::NewLine();
     for (const auto& note : notes) {
-        ImGui::SameLine(0, 0);
-        ImGui::Button(note.name, ImVec2(130, 130));
+        if (ImGui::GetCursorPosY() > 0) {
+            ImGui::SameLine(0, 0);
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 1);
+        }
+        style_key(synth.kbd.gate && synth.kbd.freq_target == note.frequency);
+        ImGui::Button(note.name, ImVec2(60, 130));
+        unstyle_key();
 
         if (
             ImGui::IsKeyPressed(note.key, false) ||
             ImGui::IsItemActivated()
         ) {
-            synth.kbd.trigger = true;
+            trigger = true;
         }
 
         if (
             ImGui::IsKeyDown(note.key) ||
             ImGui::IsItemActive()
         ) {
-            synth.kbd.gate = true;
-            synth.kbd.freq_target = note.frequency;
+            freq = note.frequency;
+            gate = true;
         }
     }
+
+    synth.kbd.freq_target = freq;
+    synth.kbd.trigger = trigger;
+    synth.kbd.gate = gate;
 }
 
 void patch(Synth& synth) {
@@ -199,12 +220,13 @@ void render(Synth& synth) {
     slider("gain", &synth.vca.gain, 0, 1);
     ImGui::End();
 
-    ImGui::Begin("KEYBOARD", NULL, window_flags);
+    ImGui::Begin("KEYBOARD CONTROL", NULL, window_flags);
     slider("portamento", &synth.kbd.portamento, 0, 1);
-    ImGui::SameLine(0, ImGui::GetStyle().IndentSpacing);
     slider("transpose", &synth.kbd.transpose, -2, 2);
-    ImGui::SameLine(0, ImGui::GetStyle().IndentSpacing);
     toggle("sequencer", &synth.kbd.sequencer);
+    ImGui::End();
+
+    ImGui::Begin("KEYBOARD", NULL, window_flags);
     keyboard(synth);
     ImGui::End();
 
