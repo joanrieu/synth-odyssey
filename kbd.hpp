@@ -1,5 +1,7 @@
 #pragma once
 
+#include "coroutines.hpp"
+
 struct Kbd {
     // knobs
     float
@@ -9,6 +11,8 @@ struct Kbd {
     sequencer = false;
 
     // internal
+    int
+    state = 0;
     float
     freq_target = 0;
 
