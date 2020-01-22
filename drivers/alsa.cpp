@@ -1,12 +1,13 @@
 #include <cmath>
+#include <pthread.h>
 #include <alsa/asoundlib.h>
 
 #include "../synth.hpp"
 
 #define CHECK(pcm_op) if (pcm_op < 0) { abort(); }
 
-void* driver(void*) {
-    Synth synth;
+void* driver_thread(void* data) {
+    Synth& synth(*(Synth*)data);
 	snd_pcm_t *pcm;
     snd_pcm_hw_params_t *params;
     CHECK(snd_pcm_open(&pcm, "default", SND_PCM_STREAM_PLAYBACK, 0));
@@ -30,4 +31,9 @@ void* driver(void*) {
         }
         CHECK(snd_pcm_writei(pcm, buffer, frames));
     }
+}
+
+void driver(Synth& synth) {
+    pthread_t thread;
+    pthread_create(&thread, NULL, driver_thread, &synth);
 }
