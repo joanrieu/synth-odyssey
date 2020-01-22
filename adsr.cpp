@@ -4,77 +4,51 @@
 
 #include <cmath>
 
-// in
-extern unsigned
-sr;
-extern bool
-kbd_gate,
-lfo_trigger,
-kbd_trigger;
+#include "synth.hpp"
 
-// knobs
-float
-adsr_attack = 0,
-adsr_sustain = 0,
-adsr_decay = 0,
-adsr_release = 0;
-bool
-adsr_kbd_trigger = true,
-adsr_kbd_repeat = true;
-
-// internal
-float
-adsr_state = 0,
-adsr_done = 0,
-adsr_todo = 0;
-
-// out
-float
-adsr_out = 0;
-
-void update_adsr() {
-    auto auto_trigger = (adsr_kbd_repeat and kbd_gate and lfo_trigger) or (not adsr_kbd_repeat and lfo_trigger);
-    auto trigger = (adsr_kbd_trigger and kbd_trigger) or (not adsr_kbd_trigger and auto_trigger);
+void Synth::update_adsr() {
+    auto auto_trigger = (adsr.kbd_repeat and kbd.gate and lfo.trigger) or (not adsr.kbd_repeat and lfo.trigger);
+    auto trigger = (adsr.kbd_trigger and kbd.trigger) or (not adsr.kbd_trigger and auto_trigger);
     if (trigger) {
-        adsr_state = 1;
-        adsr_done = 0;
-        adsr_todo = std::floor(adsr_attack * sr);
+        adsr.state = 1;
+        adsr.done = 0;
+        adsr.todo = std::floor(adsr.attack * sr);
     }
-    if (adsr_state == 1) {
-        if (adsr_todo > 0) {
-            adsr_out = adsr_done / (adsr_done + adsr_todo);
+    if (adsr.state == 1) {
+        if (adsr.todo > 0) {
+            adsr.out = adsr.done / (adsr.done + adsr.todo);
         } else {
-            adsr_state = 2;
-            adsr_done = 0;
-            adsr_todo = std::floor(adsr_decay * sr);
+            adsr.state = 2;
+            adsr.done = 0;
+            adsr.todo = std::floor(adsr.decay * sr);
         }
     }
-    if (adsr_state == 2) {
-        if (adsr_todo > 0) {
-            adsr_out = 1 - ((1 - adsr_sustain) * adsr_done / (adsr_done + adsr_todo));
+    if (adsr.state == 2) {
+        if (adsr.todo > 0) {
+            adsr.out = 1 - ((1 - adsr.sustain) * adsr.done / (adsr.done + adsr.todo));
         } else {
-            adsr_state = 3;
+            adsr.state = 3;
         }
     }
-    if (adsr_state == 3) {
-        adsr_out = adsr_sustain;
+    if (adsr.state == 3) {
+        adsr.out = adsr.sustain;
     }
-    if ((adsr_kbd_trigger and not kbd_gate and adsr_state != 0 and adsr_state != 4) or (not adsr_kbd_trigger and adsr_state == 3)) {
-        adsr_state = 4;
-        adsr_done = 0;
-        adsr_todo = std::floor(adsr_release * sr);
+    if ((adsr.kbd_trigger and not kbd.gate and adsr.state != 0 and adsr.state != 4) or (not adsr.kbd_trigger and adsr.state == 3)) {
+        adsr.state = 4;
+        adsr.done = 0;
+        adsr.todo = std::floor(adsr.release * sr);
     }
-    if (adsr_state == 4) {
-        if (adsr_todo > 0) {
-            adsr_out = adsr_sustain * adsr_todo / (adsr_done + adsr_todo);
+    if (adsr.state == 4) {
+        if (adsr.todo > 0) {
+            adsr.out = adsr.sustain * adsr.todo / (adsr.done + adsr.todo);
         } else {
-            adsr_state = 0;
+            adsr.state = 0;
         }
     }
-    if (adsr_state == 0) {
-        adsr_out = 0;
+    if (adsr.state == 0) {
+        adsr.out = 0;
     } else {
-        adsr_done = adsr_done + 1;
-        adsr_todo = adsr_todo - 1;
+        adsr.done = adsr.done + 1;
+        adsr.todo = adsr.todo - 1;
     }
 }

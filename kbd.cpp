@@ -5,29 +5,9 @@
 #include <cmath>
 #include "coroutines.h"
 
-// in
-extern unsigned
-sr;
+#include "synth.hpp"
 
-// knobs
-float
-kbd_portamento = 0,
-kbd_transpose = 0;
-bool
-kbd_sequencer = false;
-
-// internal
-float
-kbd_freq_target = 0;
-
-// out
-float
-kbd_freq = 0;
-bool
-kbd_trigger = false,
-kbd_gate = false;
-
-void update_kbd() {
+void Synth::update_kbd() {
     static int i, j;
     float a, transpose;
     
@@ -48,14 +28,14 @@ void update_kbd() {
     while (true) {
         for (i = 0; melody[i]; ++i) {
             for (j = 0; j < samples_per_note; ++j) {
-                if (kbd_sequencer) {
-                    kbd_trigger = j == 0;
-                    kbd_gate = j < samples_per_note;
-                    kbd_freq_target = melody[i];
+                if (kbd.sequencer) {
+                    kbd.trigger = j == 0;
+                    kbd.gate = j < samples_per_note;
+                    kbd.freq_target = melody[i];
                 }
-                a = 1 - std::pow(10, -2 - kbd_portamento * sr / 2e4);
-                transpose = kbd_transpose >= 0 ? std::pow(2, kbd_transpose) : 1 / std::pow(2, -kbd_transpose);
-                kbd_freq = a * kbd_freq + (1 - a) * kbd_freq_target * transpose;
+                a = 1 - std::pow(10, -2 - kbd.portamento * sr / 2e4);
+                transpose = kbd.transpose >= 0 ? std::pow(2, kbd.transpose) : 1 / std::pow(2, -kbd.transpose);
+                kbd.freq = a * kbd.freq + (1 - a) * kbd.freq_target * transpose;
                 crReturn();
             }
         }

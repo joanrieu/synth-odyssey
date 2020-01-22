@@ -1,17 +1,6 @@
-void update_kbd();
-void update_ar();
-void update_adsr();
-void update_vco1();
-void update_vco2();
-void update_lfo();
-void update_noise();
-void update_sh();
-void update_mix();
-void update_vcf();
-void update_hpf();
-void update_vca();
+#include "synth.hpp"
 
-void update() {
+void Synth::update() {
     update_kbd();
     update_ar();
     update_adsr();
