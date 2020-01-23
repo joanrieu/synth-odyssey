@@ -66,6 +66,31 @@ void toggle(const char* name, bool* value) {
     ImGui::Checkbox(name, value);
 }
 
+void toggle(const char* name_on, const char* name_off, bool* value) {
+    int on = *value;
+    ImGui::RadioButton(name_on, &on, 1);
+    ImGui::SameLine();
+    ImGui::RadioButton(name_off, &on, 0);
+    *value = on;
+}
+
+void slider_toggle(
+    const char* name,
+    const char* name_on,
+    const char* name_off,
+    bool* bool_value,
+    float* float_value,
+    const float min,
+    const float max,
+    const float power = 1.0f
+) {
+    ImGui::PushID(float_value);
+    slider(name, float_value, min, max, power);
+    ImGui::SameLine();
+    toggle(name_on, name_off, bool_value);
+    ImGui::PopID();
+}
+
 void keyboard(Synth& synth) {
     float freq = synth.kbd.freq_target;
     bool trigger = false, gate = false;
@@ -134,97 +159,82 @@ void render(Synth& synth) {
     decoration();
 
     ImGui::Begin("VCO 1", NULL, window_flags);
-    slider("tune", &synth.vco1.tune, 0, 16, 2);
-    slider("detune", &synth.vco1.detune, 0, 16, 2);
-    toggle("kbd", &synth.vco1.kbd);
-    slider("fm1", &synth.vco1.fm1, 0, 1);
-    toggle("fm1_is_lfo_sine", &synth.vco1.fm1_is_lfo_sine);
-    slider("fm2", &synth.vco1.fm2, 0, 1);
-    toggle("fm2_is_sh_out", &synth.vco1.fm2_is_sh_out);
-    slider("pw", &synth.vco1.pw, 0, 1);
-    slider("pwm", &synth.vco1.pwm, 0, 1);
-    toggle("pwm_is_lfo", &synth.vco1.pwm_is_lfo);
+    slider("Tune (coarse)", &synth.vco1.tune, 0, 16, 2);
+    slider("Tune (fine)", &synth.vco1.detune, 0, 16, 2);
+    toggle("Audio (keyboard on)", "LF (keyboard off)", &synth.vco1.kbd);
+    slider_toggle("FM 1", "LFO Sine", "LFO Square", &synth.vco1.fm1_is_lfo_sine, &synth.vco1.fm1, 0, 1);
+    slider_toggle("FM 2", "SH", "ADSR", &synth.vco1.fm2_is_sh_out, &synth.vco1.fm2, 0, 1);
+    slider("PW", &synth.vco1.pw, 0, 1);
+    slider_toggle("PWM", "LFO Sine", "ADSR", &synth.vco1.pwm_is_lfo, &synth.vco1.pwm, 0, 1);
     ImGui::End();
 
     ImGui::Begin("VCO 2", NULL, window_flags);
-    slider("tune", &synth.vco2.tune, 0, 16, 2);
-    slider("detune", &synth.vco2.detune, 0, 16, 2);
-    toggle("sync", &synth.vco2.sync);
-    slider("fm1", &synth.vco2.fm1, 0, 1);
-    toggle("fm1_is_lfo_sine", &synth.vco2.fm1_is_lfo_sine);
-    slider("fm2", &synth.vco2.fm2, 0, 1);
-    toggle("fm2_is_sh_out", &synth.vco2.fm2_is_sh_out);
-    slider("pw", &synth.vco2.pw, 0, 1);
-    slider("pwm", &synth.vco2.pwm, 0, 1);
-    toggle("pwm_is_lfo", &synth.vco2.pwm_is_lfo);
+    slider("Tune (coarse)", &synth.vco2.tune, 0, 16, 2);
+    slider("Tune (fine)", &synth.vco2.detune, 0, 16, 2);
+    toggle("Sync", &synth.vco2.sync);
+    slider_toggle("FM 1", "LFO Sine", "SH Mix", &synth.vco2.fm1_is_lfo_sine, &synth.vco2.fm1, 0, 1);
+    slider_toggle("FM 2", "SH", "ADSR", &synth.vco2.fm2_is_sh_out, &synth.vco2.fm2, 0, 1);
+    slider("PW", &synth.vco2.pw, 0, 1);
+    slider_toggle("PWM", "LFO Sine", "ADSR", &synth.vco2.pwm_is_lfo, &synth.vco2.pwm, 0, 1);
     ImGui::End();
 
     ImGui::Begin("VCF", NULL, window_flags);
-    slider("cutoff", &synth.vcf.cutoff, 0, 16000, 2);
-    slider("reso", &synth.vcf.reso, 0, 100, 2);
-    slider("mod1", &synth.vcf.mod1, 0, 1);
-    toggle("mod1_kbd", &synth.vcf.mod1_kbd);
-    slider("mod2", &synth.vcf.mod2, 0, 1);
-    toggle("mod2_sh", &synth.vcf.mod2_sh);
-    slider("env", &synth.vcf.env, 0, 1);
-    toggle("env_adsr", &synth.vcf.env_adsr);
+    slider("Cutoff", &synth.vcf.cutoff, 0, 16000, 2);
+    slider("Resonance", &synth.vcf.reso, 0, 100, 2);
+    slider_toggle("FM 1", "Keyboard", "SH Mix", &synth.vcf.mod1_kbd, &synth.vcf.mod1, 0, 1);
+    slider_toggle("FM 2", "SH", "LFO Sine", &synth.vcf.mod2_sh, &synth.vcf.mod2, 0, 1);
+    slider_toggle("Envelope", "ADSR", "AR", &synth.vcf.env_adsr, &synth.vcf.env, 0, 1);
     ImGui::End();
 
     ImGui::Begin("LFO", NULL, window_flags);
-    slider("freq", &synth.lfo.freq, 0, 20, 2);
+    slider("Frequency", &synth.lfo.freq, 0, 20, 2);
     ImGui::End();
 
     ImGui::Begin("SAMPLE / HOLD", NULL, window_flags);
-    slider("vco1", &synth.sh.vco1, 0, 1);
-    toggle("vco1_saw", &synth.sh.vco1_saw);
-    slider("noise", &synth.sh.noise, 0, 1);
-    toggle("noise_gen", &synth.sh.noise_gen);
-    toggle("lfo_trigger", &synth.sh.lfo_trigger);
-    slider("lag", &synth.sh.lag, 0, 1);
+    slider_toggle("VCO 1", "Saw", "Square", &synth.sh.vco1_saw, &synth.sh.vco1, 0, 1);
+    slider_toggle("", "Noise", "VCO 2", &synth.sh.noise_gen, &synth.sh.noise, 0, 1);
+    toggle("LFO Trigger", "Keyboard Trigger", &synth.sh.lfo_trigger);
+    slider("Output Lag", &synth.sh.lag, 0, 1);
     ImGui::End();
 
     ImGui::Begin("NOISE", NULL, window_flags);
-    toggle("white", &synth.noise.white);
+    toggle("White", "Pink", &synth.noise.white);
     ImGui::End();
 
     ImGui::Begin("MIXER", NULL, window_flags);
-    slider("vco1", &synth.mix.vco1, 0, 1);
-    toggle("vco1_saw", &synth.mix.vco1_saw);
-    slider("vco2", &synth.mix.vco2, 0, 1);
-    toggle("vco2_saw", &synth.mix.vco2_saw);
-    slider("noise_ring", &synth.mix.noise_ring, 0, 1);
-    toggle("noise", &synth.mix.noise);
+    slider_toggle("VCO 1", "Saw", "Square", &synth.mix.vco1_saw, &synth.mix.vco1, 0, 1);
+    slider_toggle("VCO 2", "Saw", "Square", &synth.mix.vco2_saw, &synth.mix.vco2, 0, 1);
+    slider_toggle("", "Noise", "Ring", &synth.mix.noise, &synth.mix.noise_ring, 0, 1);
     ImGui::End();
 
     ImGui::Begin("HPF", NULL, window_flags);
-    slider("cutoff", &synth.hpf.cutoff, 0, 16000, 2);
+    slider("Cutoff", &synth.hpf.cutoff, 0, 16000, 2);
     ImGui::End();
 
     ImGui::Begin("AR", NULL, window_flags);
-    slider("attack", &synth.ar.attack, 0, 1);
-    slider("release", &synth.ar.release, 0, 1);
-    toggle("kbd_trigger", &synth.ar.kbd_trigger);
+    slider("Attack", &synth.ar.attack, 0, 1);
+    slider("Release", &synth.ar.release, 0, 1);
+    toggle("Keyboard Trigger", &synth.ar.kbd_trigger);
     ImGui::End();
 
     ImGui::Begin("ADSR", NULL, window_flags);
-    slider("attack", &synth.adsr.attack, 0, 1);
-    slider("sustain", &synth.adsr.sustain, 0, 1);
-    slider("decay", &synth.adsr.decay, 0, 1);
-    slider("release", &synth.adsr.release, 0, 1);
-    toggle("kbd_trigger", &synth.adsr.kbd_trigger);
-    toggle("kbd_repeat", &synth.adsr.kbd_repeat);
+    slider("Attack", &synth.adsr.attack, 0, 1);
+    slider("Sustain", &synth.adsr.sustain, 0, 1);
+    slider("Decay", &synth.adsr.decay, 0, 1);
+    slider("Release", &synth.adsr.release, 0, 1);
+    toggle("Keyboard Gate", "LFO Repeat", &synth.adsr.kbd_trigger);
+    toggle("Keyboard Repeat", "Auto Repeat", &synth.adsr.kbd_repeat);
     ImGui::End();
 
     ImGui::Begin("VCA", NULL, window_flags);
-    slider("env", &synth.vca.env, 0, 1);
-    toggle("env_ar", &synth.vca.env_ar);
-    slider("gain", &synth.vca.gain, 0, 1);
+    slider_toggle("Envelope", "AR", "ADSR", &synth.vca.env_ar, &synth.vca.env, 0, 1);
+    slider("Gain", &synth.vca.gain, 0, 1);
     ImGui::End();
 
     ImGui::Begin("KEYBOARD CONTROL", NULL, window_flags);
-    slider("portamento", &synth.kbd.portamento, 0, 1);
-    slider("transpose", &synth.kbd.transpose, -2, 2);
-    toggle("sequencer", &synth.kbd.sequencer);
+    slider("Portamento", &synth.kbd.portamento, 0, 1);
+    slider("Transpose", &synth.kbd.transpose, -2, 2);
+    toggle("Sequencer", &synth.kbd.sequencer);
     ImGui::End();
 
     ImGui::Begin("KEYBOARD", NULL, window_flags);
