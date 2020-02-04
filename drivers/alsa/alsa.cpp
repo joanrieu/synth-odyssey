@@ -2,7 +2,7 @@
 #include <pthread.h>
 #include <alsa/asoundlib.h>
 
-#include "../synth.hpp"
+#include "../../lib/synth.hpp"
 
 #define CHECK(pcm_op) if (pcm_op < 0) { abort(); }
 
