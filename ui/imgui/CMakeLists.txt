@@ -1,4 +1,4 @@
-add_executable(
+add_library(
     SynthImgui
     main
     ui
