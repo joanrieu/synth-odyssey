@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(SynthOdyssey)
 
+set(CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/OpenSubdiv/cmake"
+)
+
 add_subdirectory(lib)
 add_subdirectory(drivers/alsa)
 add_subdirectory(ui/imgui)
