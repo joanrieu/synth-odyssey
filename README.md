@@ -6,13 +6,14 @@ Digital homage to the ARP Odyssey synthesizer.
 
 ## Building
 
-The project is built using CMake and is split into independent libraries.
+The project is built using CMake and is split into libraries.
 
-### Submodule dependencies
+### Dependencies
 
-On Fedora Linux, install the following dependencies:
+On Fedora Linux, install the following dependencies for each module:
 
-| Module | Dependencies |
-| Alsa | alsa-lib-devel |
-| Imgui | glfw-devel |
-| Qt | qt5-devel |
+| Module | Dependencies   |
+|--------|----------------|
+| Alsa   | alsa-lib-devel |
+| Imgui  | glfw-devel     |
+| Qt     | qt5-devel      |
