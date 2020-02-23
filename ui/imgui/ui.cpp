@@ -1,7 +1,7 @@
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 
-#include "../../lib/synth.hpp"
+#include "../../core/synth.hpp"
 
 #define KEY(name) GLFW_KEY_##name
 

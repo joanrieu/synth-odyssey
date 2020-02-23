@@ -31,7 +31,7 @@
 #pragma comment(lib, "legacy_stdio_definitions")
 #endif
 
-#include "../../lib/synth.hpp"
+#include "../../core/synth.hpp"
 void render(Synth&);
 void driver(Synth&);
 
