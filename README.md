@@ -15,3 +15,4 @@ On Fedora Linux, install the following dependencies:
 | Module | Dependencies |
 | Alsa | alsa-lib-devel |
 | Imgui | glfw-devel |
+| Qt | qt5-devel |

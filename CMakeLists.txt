@@ -5,10 +5,6 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/vendor/OpenSubdiv/cmake"
 )
 
-add_subdirectory(lib)
-add_subdirectory(drivers/alsa)
-add_subdirectory(ui/imgui)
-
 set(EMPTY_FILE ${CMAKE_CURRENT_BINARY_DIR}/empty.cpp)
 
 if (EXISTS ${EMPTY_FILE})
@@ -23,5 +19,13 @@ file(
     CONDITION $<NOT:${HAS_EMPTY_FILE}>
 )
 
+add_subdirectory(lib)
+add_subdirectory(drivers/alsa)
+add_subdirectory(ui/imgui)
+add_subdirectory(ui/qt)
+
 add_executable(SynthAlsaImgui ${EMPTY_FILE})
 target_link_libraries(SynthAlsaImgui SynthAlsa SynthImgui)
+
+add_executable(SynthAlsaQt ${EMPTY_FILE})
+target_link_libraries(SynthAlsaQt SynthAlsa SynthQt)
