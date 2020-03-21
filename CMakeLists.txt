@@ -19,7 +19,7 @@ file(
     CONDITION $<NOT:${HAS_EMPTY_FILE}>
 )
 
-add_subdirectory(lib)
+add_subdirectory(core)
 add_subdirectory(drivers/alsa)
 add_subdirectory(ui/imgui)
 add_subdirectory(ui/qt)
