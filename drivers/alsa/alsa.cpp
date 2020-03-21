@@ -4,7 +4,7 @@
 
 #include "../../core/synth.hpp"
 
-#define CHECK(pcm_op) if (pcm_op < 0) { abort(); }
+#define CHECK(pcm_op) if (pcm_op < 0) { puts("ALSA driver error: " #pcm_op); exit(1); }
 
 void* driver_thread(void* data) {
     Synth& synth(*(Synth*)data);
@@ -29,7 +29,11 @@ void* driver_thread(void* data) {
             synth.update();
             buffer[i] = synth.vca.out * (1 << 31);
         }
-        CHECK(snd_pcm_writei(pcm, buffer, frames));
+        auto err = snd_pcm_writei(pcm, buffer, frames);
+        if (err < 0) {
+            err = snd_pcm_recover(pcm, err, 0);
+            if (err < 0) exit(1);
+        }
     }
 }
 
