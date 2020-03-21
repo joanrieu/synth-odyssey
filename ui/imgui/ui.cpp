@@ -1,9 +1,9 @@
-#include <GLFW/glfw3.h>
 #include <imgui.h>
+#include <SDL.h>
 
 #include "../../core/synth.hpp"
 
-#define KEY(name) GLFW_KEY_##name
+#define KEY(name) SDL_SCANCODE_##name
 
 struct Note {
     const char* name;
@@ -12,15 +12,15 @@ struct Note {
 };
 
 const Note notes[] = {
-    { "C3", 130.8128, GLFW_KEY_A },
-    { "D3", 146.8324, GLFW_KEY_S },
-    { "E3", 164.8138, GLFW_KEY_D },
-    { "F3", 174.6141, GLFW_KEY_F },
-    { "G3", 195.9977, GLFW_KEY_G },
-    { "A3", 220.0000, GLFW_KEY_H },
-    { "B3", 246.9417, GLFW_KEY_J },
-    { "C4", 261.6256, GLFW_KEY_K },
-    { "D4", 293.6648, GLFW_KEY_L },
+    { "C3", 130.8128, KEY(A) },
+    { "D3", 146.8324, KEY(S) },
+    { "E3", 164.8138, KEY(D) },
+    { "F3", 174.6141, KEY(F) },
+    { "G3", 195.9977, KEY(G) },
+    { "A3", 220.0000, KEY(H) },
+    { "B3", 246.9417, KEY(J) },
+    { "C4", 261.6256, KEY(K) },
+    { "D4", 293.6648, KEY(L) },
 };
 
 void style() {

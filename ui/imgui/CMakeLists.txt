@@ -1,11 +1,12 @@
-find_package(GLFW REQUIRED)
+find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 add_library(
     SynthImgui
+    SHARED
     main
     ui
-    ${PROJECT_SOURCE_DIR}/vendor/imgui/examples/imgui_impl_glfw
+    ${PROJECT_SOURCE_DIR}/vendor/imgui/examples/imgui_impl_sdl
     ${PROJECT_SOURCE_DIR}/vendor/imgui/examples/imgui_impl_opengl3
     ${PROJECT_SOURCE_DIR}/vendor/imgui/examples/libs/gl3w/GL/gl3w
     ${PROJECT_SOURCE_DIR}/vendor/imgui/imgui
@@ -24,7 +25,7 @@ target_include_directories(
     ${PROJECT_SOURCE_DIR}/vendor/imgui/
     ${PROJECT_SOURCE_DIR}/vendor/imgui/examples/
     ${PROJECT_SOURCE_DIR}/vendor/imgui/examples/libs/gl3w/
-    ${GLFW_INCLUDE_DIR}
+    ${SDL2_INCLUDE_DIRS}
     ${OPENGL_INCLUDE_DIR}
 )
 
@@ -33,6 +34,6 @@ target_link_libraries(
     PUBLIC
     SynthCore
     SynthAlsa
-    ${GLFW_LIBRARIES}
+    ${SDL2_LIBRARIES}
     ${OPENGL_LIBRARIES}
 )

@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(SynthOdyssey)
 
-set(CMAKE_MODULE_PATH
-    "${CMAKE_CURRENT_SOURCE_DIR}/vendor/OpenSubdiv/cmake"
-)
-
 set(EMPTY_FILE ${CMAKE_CURRENT_BINARY_DIR}/empty.cpp)
 
 if (EXISTS ${EMPTY_FILE})

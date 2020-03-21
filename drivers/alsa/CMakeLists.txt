@@ -1,2 +1,2 @@
-add_library(SynthAlsa alsa)
+add_library(SynthAlsa SHARED alsa)
 target_link_libraries(SynthAlsa SynthCore asound pthread)
