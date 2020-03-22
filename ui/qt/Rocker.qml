@@ -1,32 +1,24 @@
 import QtQuick 2.12
 
 Item {
+    property bool value: false
+
+    MouseArea {
+        width: 8
+        height: 29
+        onClicked: parent.value = !parent.value
+    }
+
     Rectangle {
         id: mask1
         width: 8
         height: 12
         color: "black"
+        opacity: parent.value ? 1 : 0
 
-        SequentialAnimation {
-            running: true
-            loops: Animation.Infinite
-
+        Behavior on opacity {
             NumberAnimation {
-                target: mask1
-                property: "opacity"
-                duration: 1000
-                easing.type: Easing.InOutQuad
-                from: 0
-                to: 1
-            }
-
-            NumberAnimation {
-                target: mask1
-                property: "opacity"
-                duration: 1000
-                easing.type: Easing.InOutQuad
-                from: 1
-                to: 0
+                duration: 200
             }
         }
     }
@@ -37,27 +29,11 @@ Item {
         width: 8
         height: 12
         color: "black"
+        opacity: parent.value ? 0 : 1
 
-        SequentialAnimation {
-            running: true
-            loops: Animation.Infinite
-
+        Behavior on opacity {
             NumberAnimation {
-                target: mask2
-                property: "opacity"
-                duration: 1000
-                easing.type: Easing.InOutQuad
-                from: 1
-                to: 0
-            }
-
-            NumberAnimation {
-                target: mask2
-                property: "opacity"
-                duration: 1000
-                easing.type: Easing.InOutQuad
-                from: 0
-                to: 1
+                duration: 200
             }
         }
     }

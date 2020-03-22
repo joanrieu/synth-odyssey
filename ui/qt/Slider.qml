@@ -1,7 +1,18 @@
 import QtQuick 2.12
 
 Item {
-    height: 180
+    property real value: 0
+
+    MouseArea {
+        x: 16
+        y: 32
+        width: 16
+        height: 160
+
+        onMouseYChanged: {
+            parent.value = 1 - Math.min(1, Math.max(0, mouseY / this.height))
+        }
+    }
 
     Rectangle {
         x: 22
@@ -15,27 +26,11 @@ Item {
         id: button
         source: "Button.png"
         scale: 0.5
+        y: 10 + 160 * (1 - parent.value)
 
-        SequentialAnimation {
-            running: true
-            loops: Animation.Infinite
-
+        Behavior on y {
             NumberAnimation {
-                target: button
-                property: "y"
-                duration: 1000
-                easing.type: Easing.InOutQuad
-                from: 10
-                to: 170
-            }
-
-            NumberAnimation {
-                target: button
-                property: "y"
-                duration: 1000
-                easing.type: Easing.InOutQuad
-                from: 170
-                to: 10
+                duration: 40
             }
         }
     }

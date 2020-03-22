@@ -23,11 +23,13 @@ Window {
 
             Slider {
                 id: vco1_tune
+                value: 0.5
             }
 
             Slider {
                 id: vco1_detune
                 x: 32
+                value: 0.5
             }
         }
 
@@ -36,11 +38,13 @@ Window {
 
             Slider {
                 id: vco2_tune
+                value: 0.5
             }
 
             Slider {
                 id: vco2_detune
                 x: 32
+                value: 0.5
             }
         }
 
@@ -49,6 +53,7 @@ Window {
 
             Slider {
                 id: lfo_freq
+                value: 0.5
             }
         }
 
