@@ -4,5 +4,6 @@
         <file>Odyssey.png</file>
         <file>Slider.qml</file>
         <file>Button.png</file>
+        <file>Rocker.qml</file>
     </qresource>
 </RCC>

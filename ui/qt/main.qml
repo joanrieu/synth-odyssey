@@ -224,4 +224,143 @@ Window {
             }
         }
     }
+
+    Item {
+        y: 132
+
+        Rocker {
+            id: vco1_kbd
+            x: 162
+        }
+
+        Rocker {
+            id: vco2_sync
+            x: 336
+        }
+
+        Rocker {
+            id: noise_white
+            x: 593
+        }
+    }
+
+    Item {
+        y: 598
+
+        Item {
+            x: 66
+
+            Rocker {
+                id: vco1_fm1_is_lfo_sine
+            }
+
+            Rocker {
+                id: vco1_fm2_is_sh_out
+                x: 32
+            }
+
+            Rocker {
+                id: vco1_pwm_is_lfo
+                x: 96
+            }
+        }
+
+        Item {
+            x: 240
+
+            Rocker {
+                id: vco2_fm1_is_lfo_sine
+            }
+
+            Rocker {
+                id: vco2_fm2_is_sh_out
+                x: 32
+            }
+
+            Rocker {
+                id: vco2_pwm_is_lfo
+                x: 96
+            }
+        }
+
+        Item {
+            x: 418
+
+            Rocker {
+                id: sh_vco1_saw
+            }
+
+            Rocker {
+                id: sh_noise_gen
+                x: 32
+            }
+
+            Rocker {
+                id: sh_lfo_trigger
+                x: 96
+            }
+        }
+
+        Item {
+            x: 594
+
+            Rocker {
+                id: mix_noise
+            }
+
+            Rocker {
+                id: mix_vco1_saw
+                x: 32
+            }
+
+            Rocker {
+                id: mix_vco2_saw
+                x: 64
+            }
+        }
+
+        Item {
+            x: 702
+
+            Rocker {
+                id: vcf_mod1_kbd
+            }
+
+            Rocker {
+                id: vcf_mod2_sh
+                x: 32
+            }
+
+            Rocker {
+                id: vcf_env_adsr
+                x: 64
+            }
+        }
+
+        Item {
+            x: 818
+
+            Rocker {
+                id: vca_env_ar
+            }
+        }
+
+        Item {
+            x: 898
+
+            Rocker {
+                id: adsr_kbd_trigger
+            }
+
+            Rocker {
+                id: adsr_kbd_repeat
+                x: 48
+            }
+
+            Rocker {
+                id: ar_kbd_trigger
+                x: 96
+            }
+        }
+    }
 }
