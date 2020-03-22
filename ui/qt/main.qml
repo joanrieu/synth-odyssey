@@ -10,7 +10,6 @@ Window {
     title: qsTr("Synth Odyssey")
 
     Image {
-        id: background
         source: "Odyssey.png"
         anchors.fill: parent
     }
@@ -22,14 +21,12 @@ Window {
             x: 46
 
             Slider {
-                id: vco1_tune
-                value: 0.5
+                name: "vco1_tune"
             }
 
             Slider {
-                id: vco1_detune
+                name: "vco1_detune"
                 x: 32
-                value: 0.5
             }
         }
 
@@ -37,14 +34,12 @@ Window {
             x: 222
 
             Slider {
-                id: vco2_tune
-                value: 0.5
+                name: "vco2_tune"
             }
 
             Slider {
-                id: vco2_detune
+                name: "vco2_detune"
                 x: 32
-                value: 0.5
             }
         }
 
@@ -52,8 +47,7 @@ Window {
             x: 494
 
             Slider {
-                id: lfo_freq
-                value: 0.5
+                name: "lfo_freq"
             }
         }
 
@@ -62,21 +56,21 @@ Window {
             y: 12
 
             Slider {
-                id: vcf_cutoff
+                name: "vcf_cutoff"
             }
 
             Slider {
-                id: vcf_reso
+                name: "vcf_reso"
                 x: 32
             }
 
             Slider {
-                id: hpf_cutoff
+                name: "hpf_cutoff"
                 x: 64
             }
 
             Slider {
-                id: vca_gain
+                name: "vca_gain"
                 x: 116
             }
         }
@@ -85,11 +79,11 @@ Window {
             x: 878
 
             Slider {
-                id: ar_attack
+                name: "ar_attack"
             }
 
             Slider {
-                id: ar_release
+                name: "ar_release"
                 x: 32
             }
         }
@@ -102,21 +96,21 @@ Window {
             x: 46
 
             Slider {
-                id: vco1_fm1
+                name: "vco1_fm1"
             }
 
             Slider {
-                id: vco1_fm2
+                name: "vco1_fm2"
                 x: 32
             }
 
             Slider {
-                id: vco1_pw
+                name: "vco1_pw"
                 x: 64
             }
 
             Slider {
-                id: vco1_pwm
+                name: "vco1_pwm"
                 x: 96
             }
         }
@@ -125,21 +119,21 @@ Window {
             x: 220
 
             Slider {
-                id: vco2_fm1
+                name: "vco2_fm1"
             }
 
             Slider {
-                id: vco2_fm2
+                name: "vco2_fm2"
                 x: 32
             }
 
             Slider {
-                id: vco2_pw
+                name: "vco2_pw"
                 x: 64
             }
 
             Slider {
-                id: vco2_pwm
+                name: "vco2_pwm"
                 x: 96
             }
         }
@@ -148,11 +142,11 @@ Window {
             x: 398
 
             Slider {
-                id: sh_vco1
+                name: "sh_vco1"
             }
 
             Slider {
-                id: sh_noise
+                name: "sh_noise"
                 x: 32
             }
         }
@@ -161,7 +155,7 @@ Window {
             x: 494
 
             Slider {
-                id: sh_lag
+                name: "sh_lag"
             }
         }
 
@@ -169,16 +163,16 @@ Window {
             x: 574
 
             Slider {
-                id: mix_noise_ring
+                name: "mix_noise_ring"
             }
 
             Slider {
-                id: mix_vco1
+                name: "mix_vco1"
                 x: 32
             }
 
             Slider {
-                id: mix_vco2
+                name: "mix_vco2"
                 x: 64
             }
         }
@@ -187,21 +181,21 @@ Window {
             x: 682
 
             Slider {
-                id: vcf_mod1
+                name: "vcf_mod1"
             }
 
             Slider {
-                id: vcf_mod2
+                name: "vcf_mod2"
                 x: 32
             }
 
             Slider {
-                id: vcf_env
+                name: "vcf_env"
                 x: 64
             }
 
             Slider {
-                id: vca_env
+                name: "vca_env"
                 x: 116
             }
         }
@@ -210,21 +204,21 @@ Window {
             x: 878
 
             Slider {
-                id: adsr_attack
+                name: "adsr_attack"
             }
 
             Slider {
-                id: adsr_decay
+                name: "adsr_decay"
                 x: 32
             }
 
             Slider {
-                id: adsr_sustain
+                name: "adsr_sustain"
                 x: 64
             }
 
             Slider {
-                id: adsr_release
+                name: "adsr_release"
                 x: 96
             }
         }
@@ -234,17 +228,17 @@ Window {
         y: 132
 
         Rocker {
-            id: vco1_kbd
+            name: "vco1_kbd"
             x: 162
         }
 
         Rocker {
-            id: vco2_sync
+            name: "vco2_sync"
             x: 336
         }
 
         Rocker {
-            id: noise_white
+            name: "noise_white"
             x: 593
         }
     }
@@ -256,16 +250,16 @@ Window {
             x: 66
 
             Rocker {
-                id: vco1_fm1_is_lfo_sine
+                name: "vco1_fm1_is_lfo_sine"
             }
 
             Rocker {
-                id: vco1_fm2_is_sh_out
+                name: "vco1_fm2_is_sh_out"
                 x: 32
             }
 
             Rocker {
-                id: vco1_pwm_is_lfo
+                name: "vco1_pwm_is_lfo"
                 x: 96
             }
         }
@@ -274,16 +268,16 @@ Window {
             x: 240
 
             Rocker {
-                id: vco2_fm1_is_lfo_sine
+                name: "vco2_fm1_is_lfo_sine"
             }
 
             Rocker {
-                id: vco2_fm2_is_sh_out
+                name: "vco2_fm2_is_sh_out"
                 x: 32
             }
 
             Rocker {
-                id: vco2_pwm_is_lfo
+                name: "vco2_pwm_is_lfo"
                 x: 96
             }
         }
@@ -292,16 +286,16 @@ Window {
             x: 418
 
             Rocker {
-                id: sh_vco1_saw
+                name: "sh_vco1_saw"
             }
 
             Rocker {
-                id: sh_noise_gen
+                name: "sh_noise_gen"
                 x: 32
             }
 
             Rocker {
-                id: sh_lfo_trigger
+                name: "sh_lfo_trigger"
                 x: 96
             }
         }
@@ -310,16 +304,16 @@ Window {
             x: 594
 
             Rocker {
-                id: mix_noise
+                name: "mix_noise"
             }
 
             Rocker {
-                id: mix_vco1_saw
+                name: "mix_vco1_saw"
                 x: 32
             }
 
             Rocker {
-                id: mix_vco2_saw
+                name: "mix_vco2_saw"
                 x: 64
             }
         }
@@ -328,16 +322,16 @@ Window {
             x: 702
 
             Rocker {
-                id: vcf_mod1_kbd
+                name: "vcf_mod1_kbd"
             }
 
             Rocker {
-                id: vcf_mod2_sh
+                name: "vcf_mod2_sh"
                 x: 32
             }
 
             Rocker {
-                id: vcf_env_adsr
+                name: "vcf_env_adsr"
                 x: 64
             }
         }
@@ -346,7 +340,7 @@ Window {
             x: 818
 
             Rocker {
-                id: vca_env_ar
+                name: "vca_env_ar"
             }
         }
 
@@ -354,16 +348,16 @@ Window {
             x: 898
 
             Rocker {
-                id: adsr_kbd_trigger
+                name: "adsr_kbd_trigger"
             }
 
             Rocker {
-                id: adsr_kbd_repeat
+                name: "adsr_kbd_repeat"
                 x: 48
             }
 
             Rocker {
-                id: ar_kbd_trigger
+                name: "ar_kbd_trigger"
                 x: 96
             }
         }

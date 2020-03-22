@@ -1,7 +1,8 @@
 import QtQuick 2.12
+import Synth 1.0
 
 Item {
-    property real value: 0
+    property string name
 
     MouseArea {
         x: 16
@@ -10,7 +11,7 @@ Item {
         height: 160
 
         onMouseYChanged: {
-            parent.value = 1 - Math.min(1, Math.max(0, mouseY / this.height))
+            Synth[name] = 1 - Math.min(1, Math.max(0, mouseY / this.height))
         }
     }
 
@@ -26,7 +27,7 @@ Item {
         id: button
         source: "Button.png"
         scale: 0.5
-        y: 10 + 160 * (1 - parent.value)
+        y: 10 + 160 * (1 - Synth[name])
 
         Behavior on y {
             NumberAnimation {

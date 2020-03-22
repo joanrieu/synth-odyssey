@@ -1,20 +1,20 @@
 import QtQuick 2.12
+import Synth 1.0
 
 Item {
-    property bool value: false
+    property string name
 
     MouseArea {
         width: 8
         height: 29
-        onClicked: parent.value = !parent.value
+        onClicked: Synth[name] = !Synth[name]
     }
 
     Rectangle {
-        id: mask1
         width: 8
         height: 12
         color: "black"
-        opacity: parent.value ? 1 : 0
+        opacity: !Synth[name]
 
         Behavior on opacity {
             NumberAnimation {
@@ -24,12 +24,11 @@ Item {
     }
 
     Rectangle {
-        id: mask2
         y: 17
         width: 8
         height: 12
         color: "black"
-        opacity: parent.value ? 0 : 1
+        opacity: Synth[name]
 
         Behavior on opacity {
             NumberAnimation {
