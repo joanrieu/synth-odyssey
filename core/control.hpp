@@ -1,5 +1,7 @@
 #pragma once
 
+#include <atomic>
+
 #include "synth.hpp"
 
 enum class FloatControl {
@@ -69,21 +71,42 @@ enum class ControlType {
 };
 
 struct FloatControlValue {
-    ControlType type;
     FloatControl control;
     float value;
 };
 
 struct BooleanControlValue {
-    ControlType type;
     BooleanControl control;
     bool value;
 };
 
 union ControlValue {
-    ControlType type;
-    FloatControlValue float_change;
-    BooleanControlValue boolean_change;
+    FloatControlValue float_cv;
+    BooleanControlValue boolean_cv;
 };
 
-void set_control_value(Synth& synth, const ControlValue& cv);
+struct Control {
+    ControlType type;
+    ControlValue cv;
+};
+
+struct ControlNode : Control {
+    bool applied, has_next, releasable;
+    ControlNode* next;
+};
+
+class SynthController {
+    Synth m_synth;
+
+    ControlNode* control_head;
+    ControlNode* control_reader;
+    ControlNode* control_tail;
+    void update_control(const Control& control);
+
+public:
+    SynthController();
+    ~SynthController();
+    inline const Synth& synth() const { return m_synth; }
+    void push_control(const Control& control);
+    void update();
+};
