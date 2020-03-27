@@ -17,11 +17,7 @@ file(
 
 add_subdirectory(core)
 add_subdirectory(drivers/alsa)
-add_subdirectory(ui/imgui)
 add_subdirectory(ui/qt)
 
-add_executable(SynthAlsaImgui ${EMPTY_FILE})
-target_link_libraries(SynthAlsaImgui SynthAlsa SynthImgui)
-
-add_executable(SynthAlsaQt ${EMPTY_FILE})
-target_link_libraries(SynthAlsaQt SynthAlsa SynthQt)
+add_executable(SynthOdyssey ${EMPTY_FILE})
+target_link_libraries(SynthOdyssey SynthAlsa SynthQt)

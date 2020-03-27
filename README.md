@@ -12,8 +12,7 @@ The project is built using CMake and is split into libraries.
 
 On Fedora Linux, install the following dependencies for each module:
 
-| Module | Dependencies                |
-| ------ | --------------------------- |
-| Alsa   | alsa-lib-devel              |
-| Imgui  | SDL2-devel mesa-libGL-devel |
-| Qt     | qt5-devel                   |
+| Module | Dependencies   |
+| ------ | -------------- |
+| Alsa   | alsa-lib-devel |
+| Qt     | qt5-devel      |
