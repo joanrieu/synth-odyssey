@@ -11,7 +11,7 @@ Item {
         cursorShape: "PointingHandCursor"
 
         onMouseYChanged: {
-            Synth[name] = 1 - Math.min(1, Math.max(0, mouseY / this.height))
+            Synth.floatControl(name, 1 - Math.min(1, Math.max(0, mouseY / this.height)))
         }
     }
 

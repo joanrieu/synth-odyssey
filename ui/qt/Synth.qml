@@ -58,4 +58,15 @@ QtObject {
     property bool adsr_kbd_trigger: false
     property bool adsr_kbd_repeat: false
     property bool ar_kbd_trigger: false
+
+    signal floatControl(string name, real value)
+    signal booleanControl(string name, bool value)
+
+    onFloatControl: {
+        this[name] = value
+    }
+
+    onBooleanControl: {
+        this[name] = value
+    }
 }

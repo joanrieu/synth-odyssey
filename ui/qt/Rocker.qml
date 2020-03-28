@@ -6,7 +6,7 @@ Item {
     MouseArea {
         width: 8
         height: 29
-        onClicked: Synth[name] = !Synth[name]
+        onClicked: Synth.booleanControl(name, !Synth[name])
         cursorShape: "PointingHandCursor"
     }
 
