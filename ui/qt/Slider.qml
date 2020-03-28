@@ -1,5 +1,4 @@
 import QtQuick 2.12
-import Synth 1.0
 
 Item {
     property string name
@@ -9,6 +8,7 @@ Item {
         y: 32
         width: 16
         height: 160
+        cursorShape: "PointingHandCursor"
 
         onMouseYChanged: {
             Synth[name] = 1 - Math.min(1, Math.max(0, mouseY / this.height))

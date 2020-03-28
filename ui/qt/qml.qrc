@@ -5,5 +5,7 @@
         <file>Slider.qml</file>
         <file>Button.png</file>
         <file>Rocker.qml</file>
+        <file>Synth.qml</file>
+        <file>qmldir</file>
     </qresource>
 </RCC>

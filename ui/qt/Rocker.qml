@@ -1,5 +1,4 @@
 import QtQuick 2.12
-import Synth 1.0
 
 Item {
     property string name
@@ -8,6 +7,7 @@ Item {
         width: 8
         height: 29
         onClicked: Synth[name] = !Synth[name]
+        cursorShape: "PointingHandCursor"
     }
 
     Rectangle {
