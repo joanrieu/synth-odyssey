@@ -1,8 +1,9 @@
 import QtQuick 2.12
+import Synth 1.0
 
 Item {
     property string name
-    property int index: ([
+    property int controlIndex: ([
         "vco1_tune",
         "vco1_detune",
         "vco2_tune",
@@ -37,7 +38,16 @@ Item {
         "adsr_sustain",
         "adsr_release",
     ].indexOf(name))
-    property real value: (Math.sin(index / 4) + 1) / 2
+    property real value: (Math.sin(controlIndex / 4) + 1) / 2
+
+    Connections {
+        target: Synth
+        onFloatControlChanged: {
+            if (index === controlIndex) {
+                value = newValue
+            }
+        }
+    }
 
     MouseArea {
         x: 16
@@ -45,10 +55,7 @@ Item {
         width: 16
         height: 160
         cursorShape: "PointingHandCursor"
-
-        onMouseYChanged: {
-            value = 1 - Math.min(1, Math.max(0, mouseY / this.height))
-        }
+        onMouseYChanged: Synth.setFloatControl(controlIndex, 1 - Math.min(1, Math.max(0, mouseY / this.height)))
     }
 
     Rectangle {

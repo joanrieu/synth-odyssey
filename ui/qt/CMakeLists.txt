@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
-add_library(SynthQt SHARED main.cpp qml.qrc)
+add_library(SynthQt SHARED main.cpp QSynth.cpp qml.qrc)
 
 target_compile_definitions(SynthQt
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)

@@ -1,8 +1,9 @@
 import QtQuick 2.12
+import Synth 1.0
 
 Item {
     property string name
-    property int index: ([
+    property int controlIndex: ([
         "vco1_kbd",
         "vco2_sync",
         "noise_white",
@@ -26,12 +27,21 @@ Item {
         "adsr_kbd_repeat",
         "ar_kbd_trigger",
     ].indexOf(name))
-    property bool value: index % 2
+    property bool value: controlIndex % 2
+
+    Connections {
+        target: Synth
+        onBooleanControlChanged: {
+            if (index === controlIndex) {
+                value = newValue
+            }
+        }
+    }
 
     MouseArea {
         width: 8
         height: 29
-        onClicked: value = !value
+        onClicked: Synth.setBooleanControl(controlIndex, !value)
         cursorShape: "PointingHandCursor"
     }
 
