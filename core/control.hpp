@@ -4,6 +4,10 @@
 
 #include "synth.hpp"
 
+enum class UnsignedControl {
+    SAMPLE_RATE
+};
+
 enum class FloatControl {
     VCO1_TUNE,
     VCO1_DETUNE,
@@ -66,8 +70,14 @@ enum class BooleanControl {
 };
 
 enum class ControlType {
+    UNSIGNED,
     BOOLEAN,
     FLOAT,
+};
+
+struct UnsignedControlValue {
+    UnsignedControl control;
+    unsigned value;
 };
 
 struct FloatControlValue {
@@ -81,6 +91,7 @@ struct BooleanControlValue {
 };
 
 union ControlValue {
+    UnsignedControlValue unsigned_cv;
     FloatControlValue float_cv;
     BooleanControlValue boolean_cv;
 };
@@ -90,7 +101,8 @@ struct Control {
     ControlValue cv;
 };
 
-struct ControlNode : Control {
+struct ControlNode {
+    Control control;
     bool applied, has_next, releasable;
     ControlNode* next;
 };

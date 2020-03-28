@@ -17,8 +17,7 @@ SynthController::~SynthController() {
 void SynthController::push_control(const Control& control) {
     // push new control
     control_tail->next = new ControlNode();
-    control_tail->next->type = control.type;
-    control_tail->next->cv = control.cv;
+    control_tail->next->control = control;
     control_tail->has_next = true;
     control_tail = control_tail->next;
     // delete old controls
@@ -32,7 +31,7 @@ void SynthController::push_control(const Control& control) {
 void SynthController::update() {
     while (true) {
         if (!control_reader->applied) {
-            update_control(*control_reader);
+            update_control(control_reader->control);
             control_reader->applied = true;
         }
         if (control_reader->has_next) {
@@ -47,6 +46,12 @@ void SynthController::update() {
 
 void SynthController::update_control(const Control& control) {
     switch (control.type) {
+    case ControlType::UNSIGNED:
+        switch (control.cv.unsigned_cv.control) {
+        case UnsignedControl::SAMPLE_RATE: m_synth.sr = control.cv.unsigned_cv.value; break;
+        }
+        break;
+
     case ControlType::FLOAT:
         switch (control.cv.float_cv.control) {
         case FloatControl::VCO1_TUNE: m_synth.vco1.tune = control.cv.float_cv.value; break;
