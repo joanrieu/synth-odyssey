@@ -1,7 +1,5 @@
 #pragma once
 
-#include <atomic>
-
 #include "synth.hpp"
 
 enum class UnsignedControl {

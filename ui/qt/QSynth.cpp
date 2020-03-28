@@ -2,12 +2,26 @@
 
 #include "QSynth.hpp"
 
+void driver(SynthController& controller);
+
+QSynth::QSynth() {
+    driver(controller);
+}
+
 void QSynth::setFloatControl(int index, float newValue) {
-    std::cout << "float " << index << " = " << newValue << std::endl;
+    Control control;
+    control.type = ControlType::FLOAT;
+    control.cv.float_cv.control = FloatControl(index);
+    control.cv.float_cv.value = newValue;
+    controller.push_control(control);
     emit floatControlChanged(index, newValue);
 }
 
 void QSynth::setBooleanControl(int index, bool newValue) {
-    std::cout << "bool " << index << " = " << newValue << std::endl;
+    Control control;
+    control.type = ControlType::FLOAT;
+    control.cv.boolean_cv.control = BooleanControl(index);
+    control.cv.boolean_cv.value = newValue;
+    controller.push_control(control);
     emit booleanControlChanged(index, newValue);
 }

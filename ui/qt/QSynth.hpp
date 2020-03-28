@@ -2,10 +2,15 @@
 
 #include <QObject>
 
+#include "../../core/control.hpp"
+
 class QSynth : public QObject {
     Q_OBJECT
 
+    SynthController controller;
+
 public:
+    QSynth();
     Q_INVOKABLE void setFloatControl(int index, float newValue);
     Q_INVOKABLE void setBooleanControl(int index, bool newValue);
 
