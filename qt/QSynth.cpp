@@ -2,12 +2,6 @@
 
 #include "QSynth.hpp"
 
-void driver(SynthController& controller);
-
-QSynth::QSynth() {
-    driver(controller);
-}
-
 void QSynth::setFloatControl(int index, float newValue) {
     Control control;
     control.type = ControlType::FLOAT;
