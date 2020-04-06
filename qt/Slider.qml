@@ -3,51 +3,7 @@ import Synth 1.0
 
 Item {
     property string name
-    property int controlIndex: ([
-        "vco1_tune",
-        "vco1_detune",
-        "vco2_tune",
-        "vco2_detune",
-        "lfo_freq",
-        "vcf_cutoff",
-        "vcf_reso",
-        "hpf_cutoff",
-        "vca_gain",
-        "ar_attack",
-        "ar_release",
-        "vco1_fm1",
-        "vco1_fm2",
-        "vco1_pw",
-        "vco1_pwm",
-        "vco2_fm1",
-        "vco2_fm2",
-        "vco2_pw",
-        "vco2_pwm",
-        "sh_vco1",
-        "sh_noise",
-        "sh_lag",
-        "mix_noise_ring",
-        "mix_vco1",
-        "mix_vco2",
-        "vcf_mod1",
-        "vcf_mod2",
-        "vcf_env",
-        "vca_env",
-        "adsr_attack",
-        "adsr_decay",
-        "adsr_sustain",
-        "adsr_release",
-    ].indexOf(name))
-    property real value: (Math.sin(controlIndex / 4) + 1) / 2
-
-    Connections {
-        target: Synth
-        onFloatControlChanged: {
-            if (index === controlIndex) {
-                value = newValue
-            }
-        }
-    }
+    property real value: Synth[name]
 
     MouseArea {
         x: 16
@@ -55,7 +11,7 @@ Item {
         width: 16
         height: 160
         cursorShape: "PointingHandCursor"
-        onMouseYChanged: Synth.setFloatControl(controlIndex, 1 - Math.min(1, Math.max(0, mouseY / this.height)))
+        onMouseYChanged: Synth[name] = 1 - Math.min(1, Math.max(0, mouseY / this.height))
     }
 
     Rectangle {

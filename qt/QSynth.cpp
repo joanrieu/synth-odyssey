@@ -1,4 +1,3 @@
-#include <iostream>
 #include <QDebug>
 
 #include "QSynth.hpp"
@@ -8,8 +7,9 @@ QSynthDevice::QSynthDevice(Synth &synth, QObject *parent) : QIODevice(parent), m
 }
 
 qint64 QSynthDevice::readData(char *data, qint64 maxSize) {
+    QMutexLocker locker(&mutex);
     const qint64 sampleCount = maxSize / sizeof(float);
-    float* samples = (float*)data;
+    float *samples = (float *)data;
     for (qint64 i = 0; i < sampleCount; ++i)
         samples[i] = m_synth.update();
     return sampleCount * sizeof(float);
@@ -19,7 +19,7 @@ qint64 QSynthDevice::writeData(const char* data, qint64 maxSize) {
     return -1;
 }
 
-QSynth::QSynth(QObject* parent) : QObject(parent), m_device(m_synth, this) {
+QSynthBase::QSynthBase(QObject *parent) : QObject(parent), m_device(m_synth, this) {
     QAudioFormat format;
     format.setCodec("audio/pcm");
     format.setChannelCount(1);
@@ -32,25 +32,7 @@ QSynth::QSynth(QObject* parent) : QObject(parent), m_device(m_synth, this) {
     qInfo() << m_output->format();
 }
 
-QSynth::~QSynth() {
+QSynthBase::~QSynthBase() {
     delete m_output;
     m_output = nullptr;
-}
-
-void QSynth::setFloatControl(int index, float newValue) {
-    Control control;
-    control.type = ControlType::FLOAT;
-    control.cv.float_cv.control = FloatControl(index);
-    control.cv.float_cv.value = newValue;
-    m_synth.push_control(control);
-    emit floatControlChanged(index, newValue);
-}
-
-void QSynth::setBooleanControl(int index, bool newValue) {
-    Control control;
-    control.type = ControlType::FLOAT;
-    control.cv.boolean_cv.control = BooleanControl(index);
-    control.cv.boolean_cv.value = newValue;
-    m_synth.push_control(control);
-    emit booleanControlChanged(index, newValue);
 }

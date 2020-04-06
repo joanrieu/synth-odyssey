@@ -27,7 +27,12 @@ class Synth {
     void update_vco1();
     void update_vco2();
 
-protected:
+public:
+    virtual ~Synth() {}
+    virtual float update();
+
+    unsigned sr = 44100;
+
     ADSR adsr;
     AR ar;
     HPF hpf;
@@ -40,10 +45,4 @@ protected:
     VCF vcf;
     VCO1 vco1;
     VCO2 vco2;
-
-public:
-    virtual ~Synth() {}
-    virtual float update();
-
-    unsigned sr = 44100;
 };
