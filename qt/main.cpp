@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     qmlRegisterSingletonType<QSynth>("Synth", 1, 0, "Synth",
-        [](QQmlEngine *, QJSEngine *) -> QObject * {
-            return new QSynth();
+        [](QQmlEngine *qmlEngine, QJSEngine *) -> QObject * {
+            return new QSynth(qmlEngine);
     });
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));

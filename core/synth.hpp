@@ -13,9 +13,21 @@
 #include "vco1.hpp"
 #include "vco2.hpp"
 
-struct Synth {
-    unsigned sr = 44100;
+class Synth {
+    void update_adsr();
+    void update_ar();
+    void update_hpf();
+    void update_kbd();
+    void update_lfo();
+    void update_mix();
+    void update_noise();
+    void update_sh();
+    void update_vca();
+    void update_vcf();
+    void update_vco1();
+    void update_vco2();
 
+protected:
     ADSR adsr;
     AR ar;
     HPF hpf;
@@ -29,17 +41,9 @@ struct Synth {
     VCO1 vco1;
     VCO2 vco2;
 
-    void update();
-    void update_adsr();
-    void update_ar();
-    void update_hpf();
-    void update_kbd();
-    void update_lfo();
-    void update_mix();
-    void update_noise();
-    void update_sh();
-    void update_vca();
-    void update_vcf();
-    void update_vco1();
-    void update_vco2();
+public:
+    virtual ~Synth() {}
+    virtual float update();
+
+    unsigned sr = 44100;
 };

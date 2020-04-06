@@ -1,6 +1,6 @@
 #include "synth.hpp"
 
-void Synth::update() {
+float Synth::update() {
     update_kbd();
     update_ar();
     update_adsr();
@@ -13,4 +13,5 @@ void Synth::update() {
     update_vcf();
     update_hpf();
     update_vca();
+    return vca.out;
 }

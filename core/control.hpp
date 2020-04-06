@@ -105,18 +105,16 @@ struct ControlNode {
     ControlNode* next;
 };
 
-class SynthController {
-    Synth m_synth;
-
+class ControlledSynth : public Synth {
     ControlNode* control_head;
     ControlNode* control_reader;
     ControlNode* control_tail;
     void update_control(const Control& control);
 
 public:
-    SynthController();
-    ~SynthController();
-    inline const Synth& synth() const { return m_synth; }
+    ControlledSynth();
+    virtual ~ControlledSynth();
+
     void push_control(const Control& control);
-    void update();
+    virtual float update();
 };
