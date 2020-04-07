@@ -2,6 +2,8 @@
 
 #include <QAudioOutput>
 #include <QMutexLocker>
+#include <QMetaProperty>
+#include <QSettings>
 
 #include "../core/synth.hpp"
 
@@ -216,6 +218,12 @@ class QSynth : public QSynthBase {
     bool get_ar_kbd_trigger() { return m_synth.ar.kbd_trigger; }
     void set_ar_kbd_trigger(bool newValue) { QMutexLocker locker(&m_device.mutex); m_synth.ar.kbd_trigger = newValue; controlChanged(); }
 
+protected:
+    QSettings settings;
+
 public:
-    QSynth(QObject *parent) : QSynthBase(parent) {}
+    QSynth(QObject *parent);
+
+    Q_INVOKABLE void loadPreset(const QString &name);
+    Q_INVOKABLE void savePreset(const QString &name);
 };

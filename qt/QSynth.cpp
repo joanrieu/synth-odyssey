@@ -36,3 +36,27 @@ QSynthBase::~QSynthBase() {
     delete m_output;
     m_output = nullptr;
 }
+
+QSynth::QSynth(QObject *parent) : QSynthBase(parent), settings("./presets.ini", QSettings::IniFormat) {
+    loadPreset("Bass");
+}
+
+void QSynth::loadPreset(const QString &name) {
+    settings.beginGroup(name);
+    for (auto i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
+        auto property = metaObject()->property(i);
+        QVariant value = settings.value(property.name());
+        property.write(this, value);
+    }
+    settings.endGroup();
+}
+
+void QSynth::savePreset(const QString &name) {
+    settings.beginGroup(name);
+    for (auto i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
+        auto property = metaObject()->property(i);
+        QVariant value = property.read(this);
+        settings.setValue(property.name(), value);
+    }
+    settings.endGroup();
+}
