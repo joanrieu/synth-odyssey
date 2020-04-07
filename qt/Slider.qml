@@ -3,7 +3,11 @@ import Synth 1.0
 
 Item {
     property string name
-    property real value: Synth[name]
+    property real min: 0
+    property real max: 1
+    property real power: 1
+
+    property real value: Math.pow((Synth[name] - min) / (max - min), 1 / power)
 
     MouseArea {
         x: 16
@@ -11,7 +15,7 @@ Item {
         width: 16
         height: 160
         cursorShape: "PointingHandCursor"
-        onMouseYChanged: Synth[name] = 1 - Math.min(1, Math.max(0, mouseY / this.height))
+        onMouseYChanged: Synth[name] = min + Math.pow(1 - Math.min(1, Math.max(0, mouseY / height)), power) * (max - min)
     }
 
     Rectangle {

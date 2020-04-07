@@ -22,10 +22,17 @@ Window {
 
             Slider {
                 name: "vco1_tune"
+                min: 0
+                max: 16
+                power: 2
             }
 
             Slider {
                 name: "vco1_detune"
+                min: 0
+                max: 16
+                power: 2
+
                 x: 32
             }
         }
@@ -35,10 +42,16 @@ Window {
 
             Slider {
                 name: "vco2_tune"
+                min: 0
+                max: 16
+                power: 2
             }
 
             Slider {
                 name: "vco2_detune"
+                min: 0
+                max: 16
+                power: 2
                 x: 32
             }
         }
@@ -48,6 +61,9 @@ Window {
 
             Slider {
                 name: "lfo_freq"
+                min: 0
+                max: 20
+                power: 2
             }
         }
 
@@ -57,20 +73,35 @@ Window {
 
             Slider {
                 name: "vcf_cutoff"
+                min: 0
+                max: 16000
+                power: 2
             }
 
             Slider {
                 name: "vcf_reso"
+                min: 0
+                max: 100
+                power: 2
+
                 x: 32
             }
 
             Slider {
                 name: "hpf_cutoff"
+                min: 0
+                max: 16000
+                power: 2
+
                 x: 64
             }
 
             Slider {
                 name: "vca_gain"
+                min: 0
+                max: 10
+                power: 1
+
                 x: 116
             }
         }
@@ -80,10 +111,17 @@ Window {
 
             Slider {
                 name: "ar_attack"
+                min: 0
+                max: 1
+                power: 1
             }
 
             Slider {
                 name: "ar_release"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 32
             }
         }
@@ -97,20 +135,35 @@ Window {
 
             Slider {
                 name: "vco1_fm1"
+                min: 0
+                max: 1
+                power: 1
             }
 
             Slider {
                 name: "vco1_fm2"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 32
             }
 
             Slider {
                 name: "vco1_pw"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 64
             }
 
             Slider {
                 name: "vco1_pwm"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 96
             }
         }
@@ -120,20 +173,35 @@ Window {
 
             Slider {
                 name: "vco2_fm1"
+                min: 0
+                max: 1
+                power: 1
             }
 
             Slider {
                 name: "vco2_fm2"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 32
             }
 
             Slider {
                 name: "vco2_pw"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 64
             }
 
             Slider {
                 name: "vco2_pwm"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 96
             }
         }
@@ -143,10 +211,17 @@ Window {
 
             Slider {
                 name: "sh_vco1"
+                min: 0
+                max: 1
+                power: 1
             }
 
             Slider {
                 name: "sh_noise"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 32
             }
         }
@@ -156,6 +231,9 @@ Window {
 
             Slider {
                 name: "sh_lag"
+                min: 0
+                max: 1
+                power: 1
             }
         }
 
@@ -164,15 +242,26 @@ Window {
 
             Slider {
                 name: "mix_noise_ring"
+                min: 0
+                max: 1
+                power: 1
             }
 
             Slider {
                 name: "mix_vco1"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 32
             }
 
             Slider {
                 name: "mix_vco2"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 64
             }
         }
@@ -182,20 +271,35 @@ Window {
 
             Slider {
                 name: "vcf_mod1"
+                min: 0
+                max: 1
+                power: 1
             }
 
             Slider {
                 name: "vcf_mod2"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 32
             }
 
             Slider {
                 name: "vcf_env"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 64
             }
 
             Slider {
                 name: "vca_env"
+                min: 0
+                max: 10
+                power: 1
+
                 x: 116
             }
         }
@@ -205,20 +309,35 @@ Window {
 
             Slider {
                 name: "adsr_attack"
+                min: 0
+                max: 1
+                power: 1
             }
 
             Slider {
                 name: "adsr_decay"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 32
             }
 
             Slider {
                 name: "adsr_sustain"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 64
             }
 
             Slider {
                 name: "adsr_release"
+                min: 0
+                max: 1
+                power: 1
+
                 x: 96
             }
         }
