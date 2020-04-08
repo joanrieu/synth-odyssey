@@ -19,7 +19,10 @@ qint64 QSynthDevice::writeData(const char* data, qint64 maxSize) {
     return -1;
 }
 
-QSynthBase::QSynthBase(QObject *parent) : QObject(parent), m_device(m_synth, this) {
+QSynthBase::QSynthBase(QObject *parent) :
+        QObject(parent),
+        m_device(m_synth, this),
+        midi(RtMidiIn::UNSPECIFIED, QCoreApplication::applicationName().toStdString()) {
     QAudioFormat format;
     format.setCodec("audio/pcm");
     format.setChannelCount(1);
@@ -30,6 +33,27 @@ QSynthBase::QSynthBase(QObject *parent) : QObject(parent), m_device(m_synth, thi
     m_output->start(&m_device);
     qInfo() << m_output->metaObject()->className() << m_output->error();
     qInfo() << m_output->format();
+
+    const auto port = 1;
+    qInfo() << midi.getPortName(port).c_str();
+    midi.openPort(port);
+    midi.setCallback([](double delta, std::vector<unsigned char> *message, void *userData) {
+        auto& self = *static_cast<QSynthBase*>(userData);
+        const auto type = (*message)[0];
+        const auto note = (*message)[1];
+        const float frequency = (440.f / 32.f) * std::pow(2.f, (note - 9.f) / 12.f);
+        switch ((*message)[0]) {
+            case 144: // note on
+                self.m_synth.kbd.freq_target = frequency;
+                self.m_synth.kbd.trigger = true;
+                self.m_synth.kbd.gate = true;
+                break;
+            case 128: // note off
+                if (frequency == self.m_synth.kbd.freq_target)
+                    self.m_synth.kbd.gate = false;
+                break;
+        }
+    }, this);
 }
 
 QSynthBase::~QSynthBase() {

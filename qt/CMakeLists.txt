@@ -14,4 +14,4 @@ add_executable(SynthOdyssey main.cpp QSynth.cpp qml.qrc)
 target_compile_definitions(SynthOdyssey
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(SynthOdyssey
-  PRIVATE Qt5::Core Qt5::Quick Qt5::Multimedia SynthCore)
+  PRIVATE Qt5::Core Qt5::Quick Qt5::Multimedia SynthCore rtmidi)

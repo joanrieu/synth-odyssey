@@ -13,5 +13,6 @@ float Synth::update() {
     update_vcf();
     update_hpf();
     update_vca();
+    kbd.trigger = false;
     return vca.out;
 }

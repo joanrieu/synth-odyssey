@@ -1,25 +1,18 @@
 #pragma once
 
-#include "coroutines.hpp"
-
 struct Kbd {
     // knobs
     float
+    freq_target = 0,
     portamento = 0,
     transpose = 0;
-    bool
-    sequencer = false;
 
-    // internal
-    int
-    state = 0;
-    float
-    freq_target = 0;
+    // pass-through
+    bool
+    trigger = false, // NB: reset after update
+    gate = false;
 
     // out
     float
     freq = 0;
-    bool
-    trigger = false,
-    gate = false;
 };

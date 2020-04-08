@@ -1,9 +1,12 @@
 #pragma once
 
+#include <QCoreApplication>
 #include <QAudioOutput>
 #include <QMutexLocker>
 #include <QMetaProperty>
 #include <QSettings>
+
+#include "../vendor/rtmidi/RtMidi.h"
 
 #include "../core/synth.hpp"
 
@@ -28,6 +31,7 @@ protected:
     Synth m_synth;
     QSynthDevice m_device;
     QAudioOutput *m_output;
+    RtMidiIn midi;
     std::vector<float *> m_floats;
     std::vector<bool *> m_booleans;
 
@@ -42,6 +46,9 @@ signals:
 class QSynth : public QSynthBase {
     Q_OBJECT
 
+    Q_PROPERTY(float kbd_freq_target READ get_kbd_freq_target WRITE set_kbd_freq_target NOTIFY controlChanged)
+    float get_kbd_freq_target() { return m_synth.kbd.freq_target; }
+    void set_kbd_freq_target(float newValue) { QMutexLocker locker(&m_device.mutex); m_synth.kbd.freq_target = newValue; controlChanged(); }
     Q_PROPERTY(float kbd_portamento READ get_kbd_portamento WRITE set_kbd_portamento NOTIFY controlChanged)
     float get_kbd_portamento() { return m_synth.kbd.portamento; }
     void set_kbd_portamento(float newValue) { QMutexLocker locker(&m_device.mutex); m_synth.kbd.portamento = newValue; controlChanged(); }
@@ -148,9 +155,12 @@ class QSynth : public QSynthBase {
     float get_adsr_release() { return m_synth.adsr.release; }
     void set_adsr_release(float newValue) { QMutexLocker locker(&m_device.mutex); m_synth.adsr.release = newValue; controlChanged(); }
 
-    Q_PROPERTY(bool kbd_sequencer READ get_kbd_sequencer WRITE set_kbd_sequencer NOTIFY controlChanged)
-    bool get_kbd_sequencer() { return m_synth.kbd.sequencer; }
-    void set_kbd_sequencer(bool newValue) { QMutexLocker locker(&m_device.mutex); m_synth.kbd.sequencer = newValue; controlChanged(); }
+    Q_PROPERTY(bool kbd_trigger READ get_kbd_trigger WRITE set_kbd_trigger NOTIFY controlChanged)
+    bool get_kbd_trigger() { return m_synth.kbd.trigger; }
+    void set_kbd_trigger(bool newValue) { QMutexLocker locker(&m_device.mutex); m_synth.kbd.trigger = newValue; controlChanged(); }
+    Q_PROPERTY(bool kbd_gate READ get_kbd_gate WRITE set_kbd_gate NOTIFY controlChanged)
+    bool get_kbd_gate() { return m_synth.kbd.gate; }
+    void set_kbd_gate(bool newValue) { QMutexLocker locker(&m_device.mutex); m_synth.kbd.gate = newValue; controlChanged(); }
     Q_PROPERTY(bool vco1_kbd READ get_vco1_kbd WRITE set_vco1_kbd NOTIFY controlChanged)
     bool get_vco1_kbd() { return m_synth.vco1.kbd; }
     void set_vco1_kbd(bool newValue) { QMutexLocker locker(&m_device.mutex); m_synth.vco1.kbd = newValue; controlChanged(); }
