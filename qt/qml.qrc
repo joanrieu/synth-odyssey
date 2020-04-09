@@ -3,6 +3,7 @@
         <file>main.qml</file>
         <file>Odyssey.png</file>
         <file>Slider.qml</file>
+        <file>SliderH.qml</file>
         <file>Button.png</file>
         <file>Rocker.qml</file>
     </qresource>

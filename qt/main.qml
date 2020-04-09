@@ -44,6 +44,16 @@ Window {
         }
     }
 
+    SliderH {
+        name: "kbd_portamento"
+        min: 0
+        max: 1.5
+        power: 1
+
+        x: 600
+        y: 39
+    }
+
     Item {
         y: 92
 
