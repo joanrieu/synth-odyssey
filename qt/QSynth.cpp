@@ -10,8 +10,12 @@ qint64 QSynthDevice::readData(char *data, qint64 maxSize) {
     QMutexLocker locker(&m_mutex);
     const qint64 sampleCount = maxSize / sizeof(float);
     float *samples = (float *)data;
-    for (qint64 i = 0; i < sampleCount; ++i)
-        samples[i] = m_synth.update();
+    if (sampleCount > 0) {
+        samples[0] = m_synth.update();
+        m_synth.kbd.trigger = false;
+        for (qint64 i = 1; i < sampleCount; ++i)
+            samples[i] = m_synth.update();
+    }
     return sampleCount * sizeof(float);
 }
 
@@ -35,13 +39,24 @@ QSynth::QSynth(QObject *parent) : QSynthBase(parent),
         const float frequency = (440.f / 32.f) * std::pow(2.f, (note - 9.f) / 12.f);
         switch ((*message)[0]) {
             case 144: // note on
-                self.set_kbd_freq_target(frequency);
-                self.set_kbd_trigger(true);
-                self.set_kbd_gate(true);
+                {
+                    QMutexLocker locker(&self.m_mutex);
+                    self.m_synth.kbd.freq_target = frequency;
+                    self.m_synth.kbd.trigger = true;
+                    self.m_synth.kbd.gate = true;
+                    locker.unlock();
+                    emit self.noteOn();
+                }
                 break;
             case 128: // note off
-                if (frequency == self.get_kbd_freq_target())
-                    self.set_kbd_gate(false);
+                {
+                    QMutexLocker locker(&self.m_mutex);
+                    if (frequency == self.m_synth.kbd.freq_target) {
+                        self.m_synth.kbd.gate = false;
+                        locker.unlock();
+                        emit self.noteOff();
+                    }
+                }
                 break;
         }
     }, this);

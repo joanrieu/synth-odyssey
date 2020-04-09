@@ -55,6 +55,69 @@ Window {
     }
 
     Item {
+        x: 901
+        y: 29
+
+        Rectangle {
+            width: 10
+            height: 10
+            color: "#2C2C2C"
+            opacity: 0.7
+
+            Connections {
+                target: Synth
+                onNoteOn: kbdTriggerBlink.running = true
+            }
+
+            SequentialAnimation on opacity {
+                id: kbdTriggerBlink
+                running: false
+
+                NumberAnimation {
+                    from: 0.7
+                    to: 0
+                    duration: 100
+                }
+                NumberAnimation {
+                    from: 0
+                    to: 0.7
+                    duration: 100
+                }
+            }
+        }
+
+        Rectangle {
+            id: kbdGate
+            y: 23
+            width: 10
+            height: 10
+            color: "#2C2C2C"
+            opacity: 0.7
+
+            Connections {
+                target: Synth
+                onNoteOn: if (kbdGate.opacity != 0) kbdGateOn.running = true
+                onNoteOff: kbdGateOff.running = true
+            }
+
+            NumberAnimation on opacity {
+                id: kbdGateOn
+                running: false
+                from: 0.7
+                to: 0
+                duration: 100
+            }
+
+            NumberAnimation on opacity {
+                id: kbdGateOff
+                from: 0
+                to: 0.7
+                duration: 100
+            }
+        }
+    }
+
+    Item {
         y: 92
 
         Item {

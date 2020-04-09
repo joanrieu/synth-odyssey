@@ -9,7 +9,7 @@ struct Kbd {
 
     // pass-through
     bool
-    trigger = false, // NB: reset after update
+    trigger = false,
     gate = false;
 
     // out
