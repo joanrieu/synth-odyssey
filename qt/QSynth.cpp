@@ -40,21 +40,23 @@ QSynth::QSynth(QObject *parent) : QSynthBase(parent),
         switch ((*message)[0]) {
             case 144: // note on
                 {
-                    QMutexLocker locker(&self.m_mutex);
+                    self.m_mutex.lock();
                     self.m_synth.kbd.freq_target = frequency;
                     self.m_synth.kbd.trigger = true;
                     self.m_synth.kbd.gate = true;
-                    locker.unlock();
+                    self.m_mutex.unlock();
                     emit self.noteOn();
                 }
                 break;
             case 128: // note off
                 {
-                    QMutexLocker locker(&self.m_mutex);
+                    self.m_mutex.lock();
                     if (frequency == self.m_synth.kbd.freq_target) {
                         self.m_synth.kbd.gate = false;
-                        locker.unlock();
+                        self.m_mutex.unlock();
                         emit self.noteOff();
+                    } else {
+                        self.m_mutex.unlock();
                     }
                 }
                 break;
