@@ -65,6 +65,7 @@ void QSynth::loadPreset(const QString &name) {
     for (auto i = mo->propertyOffset(); i < mo->propertyCount(); ++i) {
         auto property = mo->property(i);
         QVariant value = settings.value(property.name());
+        qInfo() << property.name() << value;
         property.write(this, value);
     }
     settings.endGroup();
