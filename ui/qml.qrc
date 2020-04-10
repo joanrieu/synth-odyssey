@@ -6,5 +6,9 @@
         <file>SliderH.qml</file>
         <file>Button.png</file>
         <file>Rocker.qml</file>
+        <file>PresetPanel.qml</file>
+        <file>TransposeRibbon.qml</file>
+        <file>TriggerLed.qml</file>
+        <file>GateLed.qml</file>
     </qresource>
 </RCC>

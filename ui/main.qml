@@ -1,6 +1,5 @@
 ﻿import QtQuick 2.12
 import QtQuick.Window 2.12
-import Synth 1.0
 
 Window {
     visible: true
@@ -15,45 +14,16 @@ Window {
         anchors.fill: parent
     }
 
-    Text {
+    PresetPanel {
         x: 388
         y: 40
         width: 157
         height: 20
-        text: Synth.presetName + (Synth.presetDirty ? "*" : "")
-        color: "white"
-        font.pointSize: 12
-        elide: Text.ElideRight
-        horizontalAlignment: Text.AlignHCenter
     }
 
-    Item {
+    TransposeRibbon {
         x: 582
         y: 39
-
-        Repeater {
-            model: 5
-
-            Rectangle {
-                x: index * 26
-                width: 10
-                height: 10
-                color: "#2C2C2C"
-                opacity: Synth.kbd_transpose === index - 2 ? 0 : 0.7
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: "PointingHandCursor"
-                    onClicked: Synth.kbd_transpose = index - 2
-                }
-
-                Behavior on opacity {
-                    NumberAnimation {
-                        duration: 40
-                    }
-                }
-            }
-        }
     }
 
     SliderH {
@@ -70,62 +40,10 @@ Window {
         x: 934
         y: 29
 
-        Rectangle {
-            width: 10
-            height: 10
-            color: "#2C2C2C"
-            opacity: 0.7
+        TriggerLed {}
 
-            Connections {
-                target: Synth
-                onNoteOn: kbdTriggerBlink.running = true
-            }
-
-            SequentialAnimation on opacity {
-                id: kbdTriggerBlink
-                running: false
-
-                NumberAnimation {
-                    from: 0.7
-                    to: 0
-                    duration: 100
-                }
-                NumberAnimation {
-                    from: 0
-                    to: 0.7
-                    duration: 100
-                }
-            }
-        }
-
-        Rectangle {
-            id: kbdGate
+        GateLed {
             y: 23
-            width: 10
-            height: 10
-            color: "#2C2C2C"
-            opacity: 0.7
-
-            Connections {
-                target: Synth
-                onNoteOn: if (kbdGate.opacity != 0) kbdGateOn.running = true
-                onNoteOff: kbdGateOff.running = true
-            }
-
-            NumberAnimation on opacity {
-                id: kbdGateOn
-                running: false
-                from: 0.7
-                to: 0
-                duration: 100
-            }
-
-            NumberAnimation on opacity {
-                id: kbdGateOff
-                from: 0
-                to: 0.7
-                duration: 100
-            }
         }
     }
 
