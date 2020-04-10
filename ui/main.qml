@@ -16,9 +16,7 @@ Window {
 
     PresetPanel {
         x: 388
-        y: 40
-        width: 157
-        height: 20
+        y: 20
     }
 
     TransposeRibbon {
