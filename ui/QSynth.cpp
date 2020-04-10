@@ -27,6 +27,10 @@ QSynth::QSynth(QObject *parent) : QSynthBase(parent),
                                   settings("./presets.ini", QSettings::IniFormat),
                                   midi(RtMidiIn::UNSPECIFIED, QCoreApplication::applicationName().toStdString()),
                                   m_device(m_synth, m_mutex, this) {
+    connect(this, &QSynth::controlChanged, [&]{
+        this->m_presetDirty = true;
+        emit this->presetDirtyChanged();
+    });
     loadPreset("Bass");
 
     const auto port = 1;
@@ -86,6 +90,10 @@ void QSynth::loadPreset(const QString &name) {
         property.write(this, value);
     }
     settings.endGroup();
+    m_presetName = name;
+    emit presetNameChanged();
+    m_presetDirty = false;
+    emit presetDirtyChanged();
 }
 
 void QSynth::savePreset(const QString &name) {
@@ -97,4 +105,8 @@ void QSynth::savePreset(const QString &name) {
         settings.setValue(property.name(), value);
     }
     settings.endGroup();
+    m_presetName = name;
+    emit presetNameChanged();
+    m_presetDirty = false;
+    emit presetDirtyChanged();
 }

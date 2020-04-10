@@ -224,9 +224,18 @@ protected:
     QSynthDevice m_device;
     QAudioOutput *m_output;
 
+    QString m_presetName;
+    Q_PROPERTY(QString presetName MEMBER m_presetName NOTIFY presetNameChanged)
+    bool m_presetDirty;
+    Q_PROPERTY(bool presetDirty MEMBER m_presetDirty NOTIFY presetDirtyChanged)
+
 public:
     QSynth(QObject *parent);
 
     Q_INVOKABLE void loadPreset(const QString &name);
     Q_INVOKABLE void savePreset(const QString &name);
+
+signals:
+    void presetNameChanged();
+    void presetDirtyChanged();
 };

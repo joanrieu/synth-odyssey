@@ -15,8 +15,20 @@ Window {
         anchors.fill: parent
     }
 
+    Text {
+        x: 388
+        y: 40
+        width: 157
+        height: 20
+        text: Synth.presetName + (Synth.presetDirty ? "*" : "")
+        color: "white"
+        font.pointSize: 12
+        elide: Text.ElideRight
+        horizontalAlignment: Text.AlignHCenter
+    }
+
     Item {
-        x: 411
+        x: 582
         y: 39
 
         Repeater {
@@ -50,12 +62,12 @@ Window {
         max: 1.5
         power: 1
 
-        x: 600
+        x: 709
         y: 39
     }
 
     Item {
-        x: 901
+        x: 934
         y: 29
 
         Rectangle {
