@@ -36,10 +36,7 @@ MouseArea {
 
             MenuItem {
                 text: "Save As"
-                onTriggered: {
-                    presetNameField.text = Synth.presetName
-                    saveAsDialog.open()
-                }
+                onTriggered: saveAsDialog.open()
             }
         }
 
@@ -78,6 +75,13 @@ MouseArea {
             id: presetNameField
             focus: true
             placeholderText: "Preset name"
+            selectByMouse: true
+            validator: RegExpValidator { regExp: /.+/ }
+            onAccepted: saveAsDialog.accept()
+        }
+
+        onAboutToShow: {
+            presetNameField.text = Synth.presetName
         }
     }
 }
