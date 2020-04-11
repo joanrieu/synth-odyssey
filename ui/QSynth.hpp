@@ -217,9 +217,9 @@ class QSynth : public QSynthBase {
     Q_OBJECT
 
 protected:
-    QSettings settings;
+    QSettings m_settings;
 
-    RtMidiIn midi;
+    RtMidiIn m_midi;
 
     QSynthDevice m_device;
     QAudioOutput *m_output;
@@ -228,6 +228,10 @@ protected:
     Q_PROPERTY(QString presetName MEMBER m_presetName NOTIFY presetNameChanged)
     bool m_presetDirty;
     Q_PROPERTY(bool presetDirty MEMBER m_presetDirty NOTIFY presetDirtyChanged)
+
+    void initPreset();
+    void initMidiInput();
+    void initAudioOutput();
 
 public:
     QSynth(QObject *parent);

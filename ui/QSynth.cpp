@@ -24,19 +24,27 @@ qint64 QSynthDevice::writeData(const char* data, qint64 maxSize) {
 }
 
 QSynth::QSynth(QObject *parent) : QSynthBase(parent),
-                                  settings("./presets.ini", QSettings::IniFormat),
-                                  midi(RtMidiIn::UNSPECIFIED, QCoreApplication::applicationName().toStdString()),
+                                  m_settings("./presets.ini", QSettings::IniFormat),
+                                  m_midi(RtMidiIn::UNSPECIFIED, QCoreApplication::applicationName().toStdString()),
                                   m_device(m_synth, m_mutex, this) {
+    initPreset();
+    initMidiInput();
+    initAudioOutput();
+}
+
+void QSynth::initPreset() {
     connect(this, &QSynth::controlChanged, [&]{
         this->m_presetDirty = true;
         emit this->presetDirtyChanged();
     });
-    loadPreset("Bass");
+    loadPreset(m_settings.childGroups().first());
+}
 
+void QSynth::initMidiInput() {
     const auto port = 1;
-    qInfo() << midi.getPortName(port).c_str();
-    midi.openPort(port);
-    midi.setCallback([](double delta, std::vector<unsigned char> *message, void *userData) {
+    qInfo() << m_midi.getPortName(port).c_str();
+    m_midi.openPort(port);
+    m_midi.setCallback([](double delta, std::vector<unsigned char> *message, void *userData) {
         auto& self = *static_cast<QSynth *>(userData);
         const auto type = (*message)[0];
         const auto note = (*message)[1];
@@ -66,7 +74,9 @@ QSynth::QSynth(QObject *parent) : QSynthBase(parent),
                 break;
         }
     }, this);
+}
 
+void QSynth::initAudioOutput() {
     QAudioFormat format;
     format.setCodec("audio/pcm");
     format.setChannelCount(1);
@@ -81,15 +91,14 @@ QSynth::QSynth(QObject *parent) : QSynthBase(parent),
 }
 
 void QSynth::loadPreset(const QString &name) {
-    settings.beginGroup(name);
+    m_settings.beginGroup(name);
     const auto mo = metaObject()->superClass();
     for (auto i = mo->propertyOffset(); i < mo->propertyCount(); ++i) {
         auto property = mo->property(i);
-        QVariant value = settings.value(property.name());
-        qInfo() << property.name() << value;
+        QVariant value = m_settings.value(property.name());
         property.write(this, value);
     }
-    settings.endGroup();
+    m_settings.endGroup();
     m_presetName = name;
     emit presetNameChanged();
     m_presetDirty = false;
@@ -97,14 +106,14 @@ void QSynth::loadPreset(const QString &name) {
 }
 
 void QSynth::savePreset(const QString &name) {
-    settings.beginGroup(name);
+    m_settings.beginGroup(name);
     const auto mo = metaObject()->superClass();
     for (auto i = mo->propertyOffset(); i < mo->propertyCount(); ++i) {
         auto property = mo->property(i);
         QVariant value = property.read(this);
-        settings.setValue(property.name(), value);
+        m_settings.setValue(property.name(), value);
     }
-    settings.endGroup();
+    m_settings.endGroup();
     m_presetName = name;
     emit presetNameChanged();
     m_presetDirty = false;
