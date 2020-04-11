@@ -9,9 +9,25 @@ MouseArea {
 
     Menu {
         id: menu
+        modal: true
 
         Menu {
             title: "Presets"
+            modal: true
+
+            Menu {
+                title: "Open"
+                modal: true
+
+                Repeater {
+                    model: Synth.presetNames
+
+                    MenuItem {
+                        text: modelData
+                        onTriggered: Synth.loadPreset(modelData)
+                    }
+                }
+            }
 
             MenuItem {
                 text: "Save"
@@ -29,6 +45,7 @@ MouseArea {
 
         Menu {
             title: "MIDI in"
+            modal: true
             width: 400
 
             Repeater {
@@ -51,6 +68,7 @@ MouseArea {
     Dialog {
         id: saveAsDialog
         title: "Save As"
+        modal: true
         focus: true
         anchors.centerIn: parent
         standardButtons: Dialog.Save | Dialog.Cancel

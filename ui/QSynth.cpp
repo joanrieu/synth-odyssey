@@ -107,6 +107,10 @@ void QSynth::setMidiPort(int port) {
     }
 }
 
+QStringList QSynth::presetNames() {
+    return m_settings.childGroups();
+}
+
 void QSynth::loadPreset(const QString &name) {
     m_settings.beginGroup(name);
     const auto mo = metaObject()->superClass();
@@ -131,6 +135,7 @@ void QSynth::savePreset(const QString &name) {
         m_settings.setValue(property.name(), value);
     }
     m_settings.endGroup();
+    emit presetNamesChanged();
     m_presetName = name;
     emit presetNameChanged();
     m_presetDirty = false;

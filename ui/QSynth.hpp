@@ -229,10 +229,12 @@ protected:
     QSynthDevice m_device;
     QAudioOutput *m_output;
 
-    QString m_presetName;
+    Q_PROPERTY(QStringList presetNames READ presetNames NOTIFY presetNamesChanged)
+    QStringList presetNames();
     Q_PROPERTY(QString presetName MEMBER m_presetName NOTIFY presetNameChanged)
-    bool m_presetDirty;
+    QString m_presetName;
     Q_PROPERTY(bool presetDirty MEMBER m_presetDirty NOTIFY presetDirtyChanged)
+    bool m_presetDirty;
 
     void initPreset();
     void initAudioOutput();
@@ -244,6 +246,7 @@ public:
     Q_INVOKABLE void savePreset(const QString &name);
 
 signals:
+    void presetNamesChanged();
     void presetNameChanged();
     void presetDirtyChanged();
     void midiPortChanged();
