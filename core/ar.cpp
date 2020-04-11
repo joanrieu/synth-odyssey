@@ -10,37 +10,32 @@
 void Synth::update_ar() {
     auto auto_trigger = (adsr.kbd_repeat and kbd.gate and lfo.trigger) or (not adsr.kbd_repeat and lfo.trigger);
     auto trigger = (ar.kbd_trigger and kbd.trigger) or (not ar.kbd_trigger and auto_trigger);
+
     if (trigger) {
-        ar.state = 1;
-        ar.done = 0;
-        ar.todo = std::floor(ar.attack * sr);
+        ar.phase = AR::ATTACK;
     }
-    if (ar.state == 1) {
-        if (ar.todo > 0) {
-            ar.out = ar.done / (ar.done + ar.todo);
-        } else {
-            ar.state = 3;
+
+    float target = ar.phase == AR::RELEASE ? 0 : 1;
+    bool target_reached = std::abs(ar.out - target) < 0.05;
+
+    if (target_reached) {
+        if (not ar.kbd_trigger or not kbd.gate) {
+            ar.phase = AR::RELEASE;
+            target = 0;
         }
     }
-    if (ar.state == 3) {
-        ar.out = 1;
+
+    float delay;
+
+    switch (ar.phase) {
+    case AR::RELEASE:
+        delay = ar.release;
+        break;
+    case AR::ATTACK:
+        delay = ar.attack;
+        break;
     }
-    if ((ar.kbd_trigger and not kbd.gate and ar.state != 0 and ar.state != 4) or (not ar.kbd_trigger and ar.state == 3)) {
-        ar.state = 4;
-        ar.done = 0;
-        ar.todo = std::floor(ar.release * sr);
-    }
-    if (ar.state == 4) {
-        if (ar.todo > 0) {
-            ar.out = ar.todo / (ar.done + ar.todo);
-        } else {
-            ar.state = 0;
-        }
-    }
-    if (ar.state == 0) {
-        ar.out = 0;
-    } else {
-        ar.done = ar.done + 1;
-        ar.todo = ar.todo - 1;
-    }
+
+    float coef = std::exp(-3 * M_LN2 / ((delay + 0.01) * sr));
+    ar.out = coef * ar.out + (1 - coef) * target;
 }

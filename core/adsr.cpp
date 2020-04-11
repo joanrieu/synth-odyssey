@@ -9,46 +9,37 @@
 void Synth::update_adsr() {
     auto auto_trigger = (adsr.kbd_repeat and kbd.gate and lfo.trigger) or (not adsr.kbd_repeat and lfo.trigger);
     auto trigger = (adsr.kbd_trigger and kbd.trigger) or (not adsr.kbd_trigger and auto_trigger);
+
     if (trigger) {
-        adsr.state = 1;
-        adsr.done = 0;
-        adsr.todo = std::floor(adsr.attack * sr);
+        adsr.phase = ADSR::ATTACK;
     }
-    if (adsr.state == 1) {
-        if (adsr.todo > 0) {
-            adsr.out = adsr.done / (adsr.done + adsr.todo);
-        } else {
-            adsr.state = 2;
-            adsr.done = 0;
-            adsr.todo = std::floor(adsr.decay * sr);
+
+    float target = adsr.phase == ADSR::RELEASE ? 0 : adsr.phase == ADSR::DECAY ? adsr.sustain : 1;
+    bool target_reached = std::abs(adsr.out - target) < 0.05;
+
+    if (target_reached) {
+        if (not adsr.kbd_trigger or not kbd.gate) {
+            adsr.phase = ADSR::RELEASE;
+            target = 0;
+        } else if (adsr.phase == ADSR::ATTACK) {
+            adsr.phase = ADSR::DECAY;
         }
     }
-    if (adsr.state == 2) {
-        if (adsr.todo > 0) {
-            adsr.out = 1 - ((1 - adsr.sustain) * adsr.done / (adsr.done + adsr.todo));
-        } else {
-            adsr.state = 3;
-        }
+
+    float delay;
+
+    switch (adsr.phase) {
+    case ADSR::RELEASE:
+        delay = adsr.release;
+        break;
+    case ADSR::DECAY:
+        delay = adsr.decay;
+        break;
+    case ADSR::ATTACK:
+        delay = adsr.attack;
+        break;
     }
-    if (adsr.state == 3) {
-        adsr.out = adsr.sustain;
-    }
-    if ((adsr.kbd_trigger and not kbd.gate and adsr.state != 0 and adsr.state != 4) or (not adsr.kbd_trigger and adsr.state == 3)) {
-        adsr.state = 4;
-        adsr.done = 0;
-        adsr.todo = std::floor(adsr.release * sr);
-    }
-    if (adsr.state == 4) {
-        if (adsr.todo > 0) {
-            adsr.out = adsr.sustain * adsr.todo / (adsr.done + adsr.todo);
-        } else {
-            adsr.state = 0;
-        }
-    }
-    if (adsr.state == 0) {
-        adsr.out = 0;
-    } else {
-        adsr.done = adsr.done + 1;
-        adsr.todo = adsr.todo - 1;
-    }
+
+    float coef = std::exp(-3 * M_LN2 / ((delay + 0.01) * sr));
+    adsr.out = coef * adsr.out + (1 - coef) * target;
 }

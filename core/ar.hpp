@@ -9,10 +9,10 @@ struct AR {
     kbd_trigger = true;
 
     // internal
-    float
-    state = 0,
-    done = 0,
-    todo = 0;
+    enum Phase {
+        ATTACK,
+        RELEASE
+    } phase = RELEASE;
 
     // out
     float
