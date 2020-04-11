@@ -22,41 +22,4 @@ Item {
             horizontalAlignment: Text.AlignHCenter
         }
     }
-
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        onClicked: menu.popup()
-
-        Menu {
-            id: menu
-
-            Action {
-                text: "Save"
-                onTriggered: Synth.savePreset(Synth.presetName)
-            }
-
-            Action {
-                text: "Save As"
-                onTriggered: {
-                    presetNameField.text = Synth.presetName
-                    saveAsDialog.open()
-                }
-            }
-        }
-    }
-
-    Dialog {
-        id: saveAsDialog
-        focus: true
-        title: "Save As"
-        standardButtons: Dialog.Save | Dialog.Cancel
-        onAccepted: Synth.savePreset(presetNameField.text)
-
-        TextField {
-            id: presetNameField
-            focus: true
-            placeholderText: "Preset name"
-        }
-    }
- }
+}

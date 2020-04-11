@@ -14,6 +14,8 @@ Window {
         anchors.fill: parent
     }
 
+    ContextMenu {}
+
     PresetPanel {
         x: 388
         y: 20

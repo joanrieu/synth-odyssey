@@ -10,5 +10,6 @@
         <file>TransposeRibbon.qml</file>
         <file>TriggerLed.qml</file>
         <file>GateLed.qml</file>
+        <file>ContextMenu.qml</file>
     </qresource>
 </RCC>
