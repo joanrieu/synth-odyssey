@@ -9,18 +9,41 @@ MouseArea {
 
     Menu {
         id: menu
-        title: "Presets"
 
-        Action {
-            text: "Save"
-            onTriggered: Synth.savePreset(Synth.presetName)
+        Menu {
+            title: "Presets"
+
+            MenuItem {
+                text: "Save"
+                onTriggered: Synth.savePreset(Synth.presetName)
+            }
+
+            MenuItem {
+                text: "Save As"
+                onTriggered: {
+                    presetNameField.text = Synth.presetName
+                    saveAsDialog.open()
+                }
+            }
         }
 
-        Action {
-            text: "Save As"
-            onTriggered: {
-                presetNameField.text = Synth.presetName
-                saveAsDialog.open()
+        Menu {
+            title: "MIDI in"
+            width: 400
+
+            Repeater {
+                id: midiPorts
+
+                MenuItem {
+                    text: modelData
+                    checkable: true
+                    checked: Synth.midiPort === index
+                    onTriggered: Synth.midiPort = Synth.midiPort !== index ? index : -1
+                }
+            }
+
+            onAboutToShow: {
+                midiPorts.model = Synth.midiPorts
             }
         }
     }

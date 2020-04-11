@@ -220,6 +220,11 @@ protected:
     QSettings m_settings;
 
     RtMidiIn m_midi;
+    Q_PROPERTY(QStringList midiPorts READ midiPorts)
+    QStringList midiPorts();
+    Q_PROPERTY(int midiPort MEMBER m_midiPort WRITE setMidiPort NOTIFY midiPortChanged)
+    int m_midiPort;
+    void setMidiPort(int port);
 
     QSynthDevice m_device;
     QAudioOutput *m_output;
@@ -230,7 +235,6 @@ protected:
     Q_PROPERTY(bool presetDirty MEMBER m_presetDirty NOTIFY presetDirtyChanged)
 
     void initPreset();
-    void initMidiInput();
     void initAudioOutput();
 
 public:
@@ -242,4 +246,5 @@ public:
 signals:
     void presetNameChanged();
     void presetDirtyChanged();
+    void midiPortChanged();
 };

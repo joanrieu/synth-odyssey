@@ -26,9 +26,10 @@ qint64 QSynthDevice::writeData(const char* data, qint64 maxSize) {
 QSynth::QSynth(QObject *parent) : QSynthBase(parent),
                                   m_settings("./presets.ini", QSettings::IniFormat),
                                   m_midi(RtMidiIn::UNSPECIFIED, QCoreApplication::applicationName().toStdString()),
+                                  m_midiPort(-1),
                                   m_device(m_synth, m_mutex, this) {
     initPreset();
-    initMidiInput();
+    setMidiPort(m_midi.getPortCount() - 1);
     initAudioOutput();
 }
 
@@ -38,42 +39,6 @@ void QSynth::initPreset() {
         emit this->presetDirtyChanged();
     });
     loadPreset(m_settings.childGroups().first());
-}
-
-void QSynth::initMidiInput() {
-    const auto port = 1;
-    qInfo() << m_midi.getPortName(port).c_str();
-    m_midi.openPort(port);
-    m_midi.setCallback([](double delta, std::vector<unsigned char> *message, void *userData) {
-        auto& self = *static_cast<QSynth *>(userData);
-        const auto type = (*message)[0];
-        const auto note = (*message)[1];
-        const float frequency = (440.f / 32.f) * std::pow(2.f, (note - 9.f) / 12.f);
-        switch ((*message)[0]) {
-            case 144: // note on
-                {
-                    self.m_mutex.lock();
-                    self.m_synth.kbd.freq_target = frequency;
-                    self.m_synth.kbd.trigger = true;
-                    self.m_synth.kbd.gate = true;
-                    self.m_mutex.unlock();
-                    emit self.noteOn();
-                }
-                break;
-            case 128: // note off
-                {
-                    self.m_mutex.lock();
-                    if (frequency == self.m_synth.kbd.freq_target) {
-                        self.m_synth.kbd.gate = false;
-                        self.m_mutex.unlock();
-                        emit self.noteOff();
-                    } else {
-                        self.m_mutex.unlock();
-                    }
-                }
-                break;
-        }
-    }, this);
 }
 
 void QSynth::initAudioOutput() {
@@ -88,6 +53,58 @@ void QSynth::initAudioOutput() {
     m_output->start(&m_device);
     qInfo() << m_output->metaObject()->className() << m_output->error();
     qInfo() << m_output->format();
+}
+
+QStringList QSynth::midiPorts() {
+    QStringList list;
+    const unsigned count = m_midi.getPortCount();
+    for (unsigned i = 0; i < count; ++i)
+        list << QString::fromStdString(m_midi.getPortName(i));
+    return list;
+}
+
+void QSynth::setMidiPort(int port) {
+    if (m_midiPort >= 0) {
+        m_midi.cancelCallback();
+        m_midi.closePort();
+        m_midiPort = -1;
+        emit midiPortChanged();
+    }
+    if (port >= 0) {
+        m_midi.openPort(port);
+        m_midi.setCallback([](double delta, std::vector<unsigned char> *message, void *userData) {
+            auto& self = *static_cast<QSynth *>(userData);
+            const auto type = (*message)[0];
+            const auto note = (*message)[1];
+            const float frequency = (440.f / 32.f) * std::pow(2.f, (note - 9.f) / 12.f);
+            switch ((*message)[0]) {
+                case 144: // note on
+                    {
+                        self.m_mutex.lock();
+                        self.m_synth.kbd.freq_target = frequency;
+                        self.m_synth.kbd.trigger = true;
+                        self.m_synth.kbd.gate = true;
+                        self.m_mutex.unlock();
+                        emit self.noteOn();
+                    }
+                    break;
+                case 128: // note off
+                    {
+                        self.m_mutex.lock();
+                        if (frequency == self.m_synth.kbd.freq_target) {
+                            self.m_synth.kbd.gate = false;
+                            self.m_mutex.unlock();
+                            emit self.noteOff();
+                        } else {
+                            self.m_mutex.unlock();
+                        }
+                    }
+                    break;
+            }
+        }, this);
+        m_midiPort = port;
+        emit midiPortChanged();
+    }
 }
 
 void QSynth::loadPreset(const QString &name) {
