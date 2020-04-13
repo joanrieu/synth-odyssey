@@ -37,10 +37,20 @@ void Synth::update_reverb() {
             CombFilter(.34, sr),
             CombFilter(.45, sr),
             CombFilter(.56, sr),
+            CombFilter(.67, sr),
+            CombFilter(.78, sr),
+            CombFilter(.89, sr),
         };
         reverb.allpasses = {
-            AllPassFilter(.3, .012, sr),
-            AllPassFilter(.3, .023, sr),
+            AllPassFilter(.8, .012, sr),
+            AllPassFilter(.8, .023, sr),
+            AllPassFilter(.8, .034, sr),
+            AllPassFilter(.8, .045, sr),
+            AllPassFilter(.8, .056, sr),
+            AllPassFilter(.8, .067, sr),
+            AllPassFilter(.8, .078, sr),
+            AllPassFilter(.8, .089, sr),
+            AllPassFilter(.8, .090, sr),
         };
     }
 
@@ -48,16 +58,20 @@ void Synth::update_reverb() {
     // http://freeverb3vst.osdn.jp/doc/A%20Brief%20Overview%20of%20Algorithm%20of%20Reverberation.pdf
 
     float &in = vca.out;
-    float r = reverb.allpasses[1].update(
-        reverb.allpasses[0].update(
-            reverb.combs[0].update(in) +
-            reverb.combs[1].update(in) +
-            reverb.combs[2].update(in) +
-            reverb.combs[3].update(in) +
-            reverb.combs[4].update(in) +
-            reverb.combs[5].update(in)
-        )
-    );
+    float r = reverb.allpasses[8].update(
+        reverb.allpasses[7].update(reverb.allpasses[6].update(
+            reverb.allpasses[5].update(reverb.allpasses[4].update(
+                reverb.allpasses[3].update(reverb.allpasses[2].update(
+                    reverb.allpasses[1].update(reverb.allpasses[0].update(
+                        reverb.combs[0].update(in) +
+                        reverb.combs[1].update(in) +
+                        reverb.combs[2].update(in) +
+                        reverb.combs[3].update(in) +
+                        reverb.combs[4].update(in) +
+                        reverb.combs[5].update(in) +
+                        reverb.combs[6].update(in) +
+                        reverb.combs[7].update(in) +
+                        reverb.combs[8].update(in))))))))));
 
     // Simple infinite impulse response filter
     // https://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter
