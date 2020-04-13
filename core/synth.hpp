@@ -12,6 +12,7 @@
 #include "vcf.hpp"
 #include "vco1.hpp"
 #include "vco2.hpp"
+#include "reverb.hpp"
 
 class Synth {
     void update_adsr();
@@ -21,6 +22,7 @@ class Synth {
     void update_lfo();
     void update_mix();
     void update_noise();
+    void update_reverb();
     void update_sh();
     void update_vca();
     void update_vcf();
@@ -40,6 +42,7 @@ public:
     LFO lfo;
     Mix mix;
     Noise noise;
+    Reverb reverb;
     SH sh;
     VCA vca;
     VCF vcf;

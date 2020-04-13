@@ -13,5 +13,6 @@ float Synth::update() {
     update_vcf();
     update_hpf();
     update_vca();
-    return vca.out;
+    update_reverb();
+    return reverb.out;
 }
