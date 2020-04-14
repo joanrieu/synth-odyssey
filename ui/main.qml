@@ -63,7 +63,7 @@ Window {
             SliderB {
                 name: "vco1_detune"
                 min: 0
-                max: 16
+                max: 1
                 power: 2
 
                 x: 32
@@ -83,7 +83,7 @@ Window {
             SliderB {
                 name: "vco2_detune"
                 min: 0
-                max: 16
+                max: 1
                 power: 2
                 x: 32
             }
