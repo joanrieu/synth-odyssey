@@ -31,12 +31,19 @@ MouseArea {
 
             MenuItem {
                 text: "Save"
-                onTriggered: Synth.savePreset(Synth.presetName)
+                enabled: Synth.presetDirty
+                onTriggered: {
+                    presetNameField.text = Synth.presetName
+                    overwriteDialog.open()
+                }
             }
 
             MenuItem {
                 text: "Save As"
-                onTriggered: saveAsDialog.open()
+                onTriggered: {
+                    presetNameField.text = Synth.presetName
+                    saveAsDialog.open()
+                }
             }
         }
 
@@ -69,7 +76,13 @@ MouseArea {
         focus: true
         anchors.centerIn: parent
         standardButtons: Dialog.Save | Dialog.Cancel
-        onAccepted: Synth.savePreset(presetNameField.text)
+        onAccepted: {
+            if (Synth.presetNames.includes(presetNameField.text)) {
+                overwriteDialog.open()
+            } else {
+                Synth.savePreset(presetNameField.text)
+            }
+        }
 
         TextField {
             id: presetNameField
@@ -79,9 +92,21 @@ MouseArea {
             validator: RegExpValidator { regExp: /.+/ }
             onAccepted: saveAsDialog.accept()
         }
+    }
 
-        onAboutToShow: {
-            presetNameField.text = Synth.presetName
+    Dialog {
+        id: overwriteDialog
+        title: "Overwrite existing preset?"
+        modal: true
+        focus: true
+        anchors.centerIn: parent
+        standardButtons: Dialog.Yes | Dialog.No
+        onAccepted: Synth.savePreset(presetNameField.text)
+        onRejected: saveAsDialog.open()
+
+        TextField {
+            enabled: false
+            text: presetNameField.text
         }
     }
 }
