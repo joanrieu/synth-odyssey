@@ -74,12 +74,13 @@ void QSynth::setMidiPort(int port) {
         m_midi.openPort(port);
         m_midi.setCallback([](double delta, std::vector<unsigned char> *message, void *userData) {
             auto& self = *static_cast<QSynth *>(userData);
-            const auto type = (*message)[0];
-            const auto note = (*message)[1];
-            const float frequency = (440.f / 32.f) * std::pow(2.f, (note - 9.f) / 12.f);
+            const auto& status = (*message)[0];
+            const auto& data1 = (*message)[1];
+            const auto& data2 = (*message)[2];
             switch ((*message)[0]) {
-                case 144: // note on
+                case 0x90: // note on
                     {
+                        const float frequency = (440.f / 32.f) * std::pow(2.f, (data1 - 9.f) / 12.f);
                         self.m_mutex.lock();
                         self.m_synth.kbd.freq_target = frequency;
                         self.m_synth.kbd.trigger = true;
@@ -88,8 +89,9 @@ void QSynth::setMidiPort(int port) {
                         emit self.noteOn();
                     }
                     break;
-                case 128: // note off
+                case 0x80: // note off
                     {
+                        const float frequency = (440.f / 32.f) * std::pow(2.f, (data1 - 9.f) / 12.f);
                         self.m_mutex.lock();
                         if (frequency == self.m_synth.kbd.freq_target) {
                             self.m_synth.kbd.gate = false;
@@ -98,6 +100,14 @@ void QSynth::setMidiPort(int port) {
                         } else {
                             self.m_mutex.unlock();
                         }
+                    }
+                    break;
+                case 0xB0:
+                    {
+                        self.m_mutex.lock();
+                        self.m_synth.vcf.cutoff = std::pow(data2 / 127.f, 2) * 16000;
+                        self.m_mutex.unlock();
+                        emit self.controlChanged();
                     }
                     break;
             }
