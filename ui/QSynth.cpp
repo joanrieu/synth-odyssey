@@ -110,6 +110,15 @@ void QSynth::setMidiPort(int port) {
                         emit self.controlChanged();
                     }
                     break;
+                case 0xE0:
+                    {
+                        self.m_mutex.lock();
+                        const float value = ((int(data2) << 7) + int(data1)) / float(0b11111111111111) - 0.5;
+                        const int sign = value >= 0 ? 1 : -1;
+                        self.m_synth.kbd.pitch_bend = sign * std::pow(sign * value, 2);
+                        self.m_mutex.unlock();
+                    }
+                    break;
             }
         }, this);
         m_midiPort = port;

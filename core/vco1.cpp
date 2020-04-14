@@ -10,7 +10,7 @@ void Synth::update_vco1() {
         vco1.fm1 * (vco1.fm1_is_lfo_sine ? lfo.sine : lfo.square) +
         vco1.fm2 * (vco1.fm2_is_sh_out ? sh.out : adsr.out);
     auto freq = vco1.kbd ? kbd.freq : 1;
-    auto step = 2 * freq * vco1.tune * (1 + vco1.detune + fm / 2) / sr;
+    auto step = 2 * freq * vco1.tune * (1 + vco1.detune + kbd.pitch_bend + fm / 2) / sr;
     vco1.saw = vco1.saw + step;
     if (vco1.saw >= 1) {
         vco1.saw = -1;

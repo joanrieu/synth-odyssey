@@ -5,7 +5,8 @@ struct Kbd {
     float
     freq_target = 0,
     portamento = 0,
-    transpose = 0;
+    transpose = 0,
+    pitch_bend = 0;
 
     // pass-through
     bool
