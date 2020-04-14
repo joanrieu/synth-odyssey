@@ -4,6 +4,7 @@
         <file>Odyssey.png</file>
         <file>Slider.qml</file>
         <file>SliderH.qml</file>
+        <file>SliderB.qml</file>
         <file>Button.png</file>
         <file>Rocker.qml</file>
         <file>PresetPanel.qml</file>
