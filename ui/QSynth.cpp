@@ -102,15 +102,17 @@ void QSynth::setMidiPort(int port) {
                         }
                     }
                     break;
-                case 0xB0:
+                case 0xB0: // control change
                     {
-                        self.m_mutex.lock();
-                        self.m_synth.vcf.cutoff = std::pow(data2 / 127.f, 2) * 16000;
-                        self.m_mutex.unlock();
-                        emit self.controlChanged();
+                        if (data1 == 1) {
+                            self.m_mutex.lock();
+                            self.m_synth.vcf.cutoff = std::pow(data2 / 127.f, 2) * 16000;
+                            self.m_mutex.unlock();
+                            emit self.controlChanged();
+                        }
                     }
                     break;
-                case 0xE0:
+                case 0xE0: // pitch bend
                     {
                         self.m_mutex.lock();
                         const float value = ((int(data2) << 7) + int(data1)) / float(0b11111111111111) - 0.5;
