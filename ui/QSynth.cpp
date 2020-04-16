@@ -2,7 +2,7 @@
 
 #include "QSynth.hpp"
 
-QSynthDevice::QSynthDevice(Synth &synth, QMutex &mutex, QObject *parent) : QIODevice(parent), m_synth(synth), m_mutex(mutex) {
+QSynthDevice::QSynthDevice(Synth synth[2], QMutex &mutex, QObject *parent) : QIODevice(parent), m_synth(synth), m_mutex(mutex) {
     setOpenMode(ReadOnly);
 }
 
@@ -11,10 +11,19 @@ qint64 QSynthDevice::readData(char *data, qint64 maxSize) {
     const qint64 sampleCount = maxSize / sizeof(float);
     float *samples = (float *)data;
     if (sampleCount > 0) {
-        samples[0] = m_synth.update();
-        m_synth.kbd.trigger = false;
-        for (qint64 i = 1; i < sampleCount; ++i)
-            samples[i] = m_synth.update();
+        samples[0] = m_synth[0].update();
+        samples[1] = m_synth[1].update();
+        m_synth[0].kbd.trigger = false;
+        m_synth[1].kbd.trigger = false;
+        for (qint64 i = 2; i < sampleCount; ++i)
+            samples[i] = m_synth[i % 2].update();
+
+        auto skip_interval = m_synth[0].sr / 1000;
+        m_skip += sampleCount;
+        if (m_skip > skip_interval) {
+            m_synth[0].update();
+            m_skip -= skip_interval;
+        }
     }
     return sampleCount * sizeof(float);
 }
@@ -44,12 +53,12 @@ void QSynth::initPreset() {
 void QSynth::initAudioOutput() {
     QAudioFormat format;
     format.setCodec("audio/pcm");
-    format.setChannelCount(1);
-    format.setSampleRate(m_synth.sr);
+    format.setChannelCount(2);
+    format.setSampleRate(m_synth[0].sr);
     format.setSampleSize(sizeof(float) * 8);
     format.setSampleType(QAudioFormat::Float);
     m_output = new QAudioOutput(format, this);
-    m_output->setBufferSize(m_synth.sr / 10 * sizeof(float));
+    m_output->setBufferSize(m_synth[0].sr / 10 * sizeof(float));
     m_output->start(&m_device);
     qInfo() << m_output->metaObject()->className() << m_output->error();
     qInfo() << m_output->format();
@@ -82,9 +91,9 @@ void QSynth::setMidiPort(int port) {
                     {
                         const float frequency = (440.f / 32.f) * std::pow(2.f, (data1 - 9.f) / 12.f);
                         self.m_mutex.lock();
-                        self.m_synth.kbd.freq_target = frequency;
-                        self.m_synth.kbd.trigger = true;
-                        self.m_synth.kbd.gate = true;
+                        self.m_synth[0].kbd.freq_target = self.m_synth[1].kbd.freq_target = frequency;
+                        self.m_synth[0].kbd.trigger = self.m_synth[1].kbd.trigger = true;
+                        self.m_synth[0].kbd.gate = self.m_synth[1].kbd.gate = true;
                         self.m_mutex.unlock();
                         emit self.noteOn();
                     }
@@ -93,8 +102,8 @@ void QSynth::setMidiPort(int port) {
                     {
                         const float frequency = (440.f / 32.f) * std::pow(2.f, (data1 - 9.f) / 12.f);
                         self.m_mutex.lock();
-                        if (frequency == self.m_synth.kbd.freq_target) {
-                            self.m_synth.kbd.gate = false;
+                        if (frequency == self.m_synth[0].kbd.freq_target) {
+                            self.m_synth[0].kbd.gate = self.m_synth[1].kbd.gate = false;
                             self.m_mutex.unlock();
                             emit self.noteOff();
                         } else {
@@ -106,7 +115,7 @@ void QSynth::setMidiPort(int port) {
                     {
                         if (data1 == 1) {
                             self.m_mutex.lock();
-                            self.m_synth.vcf.cutoff = std::pow(data2 / 127.f, 2) * 16000;
+                            self.m_synth[0].vcf.cutoff = self.m_synth[1].vcf.cutoff = std::pow(data2 / 127.f, 2) * 16000;
                             self.m_mutex.unlock();
                             emit self.controlChanged();
                         }
@@ -117,7 +126,7 @@ void QSynth::setMidiPort(int port) {
                         self.m_mutex.lock();
                         const float value = ((int(data2) << 7) + int(data1)) / float(0b11111111111111) - 0.5;
                         const int sign = value >= 0 ? 1 : -1;
-                        self.m_synth.kbd.pitch_bend = sign * std::pow(sign * value, 2);
+                        self.m_synth[0].kbd.pitch_bend = self.m_synth[1].kbd.pitch_bend = sign * std::pow(sign * value, 2);
                         self.m_mutex.unlock();
                     }
                     break;
