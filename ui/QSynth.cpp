@@ -4,6 +4,7 @@
 
 QSynthDevice::QSynthDevice(Synth synth[2], QMutex &mutex, QObject *parent) : QIODevice(parent), m_synth(synth), m_mutex(mutex) {
     setOpenMode(ReadOnly);
+    m_synth[1].sr = m_synth[0].sr * 1.001;
 }
 
 qint64 QSynthDevice::readData(char *data, qint64 maxSize) {
@@ -17,13 +18,6 @@ qint64 QSynthDevice::readData(char *data, qint64 maxSize) {
         m_synth[1].kbd.trigger = false;
         for (qint64 i = 2; i < sampleCount; ++i)
             samples[i] = m_synth[i % 2].update();
-
-        auto skip_interval = m_synth[0].sr / 1000;
-        m_skip += sampleCount;
-        if (m_skip > skip_interval) {
-            m_synth[0].update();
-            m_skip -= skip_interval;
-        }
     }
     return sampleCount * sizeof(float);
 }
