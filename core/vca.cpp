@@ -5,6 +5,6 @@
 #include "synth.hpp"
 
 void Synth::update_vca() {
-    auto env = vca.env_ar ? ar.out : adsr.out;
-    vca.out = (vca.env * env + vca.gain) * hpf.out;
+  auto env = vca.env_ar ? ar.out : adsr.out;
+  vca.out = (vca.env * env + vca.gain) * hpf.out;
 }

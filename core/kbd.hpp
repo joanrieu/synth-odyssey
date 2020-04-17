@@ -1,19 +1,16 @@
 #pragma once
 
 struct Kbd {
-    // knobs
-    float
-    freq_target = 0,
-    portamento = 0,
-    transpose = 0,
-    pitch_bend = 0;
+  // knobs
+  float freq_target = 0;
+  float portamento = 0;
+  float transpose = 0;
+  float pitch_bend = 0;
 
-    // pass-through
-    bool
-    trigger = false,
-    gate = false;
+  // pass-through
+  bool trigger = false;
+  bool gate = false;
 
-    // out
-    float
-    freq = 0;
+  // out
+  float freq = 0;
 };

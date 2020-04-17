@@ -14,35 +14,35 @@
 #include "vco2.hpp"
 
 class Synth {
-    void update_adsr();
-    void update_ar();
-    void update_hpf();
-    void update_kbd();
-    void update_lfo();
-    void update_mix();
-    void update_noise();
-    void update_sh();
-    void update_vca();
-    void update_vcf();
-    void update_vco1();
-    void update_vco2();
+  void update_adsr();
+  void update_ar();
+  void update_hpf();
+  void update_kbd();
+  void update_lfo();
+  void update_mix();
+  void update_noise();
+  void update_sh();
+  void update_vca();
+  void update_vcf();
+  void update_vco1();
+  void update_vco2();
 
 public:
-    virtual ~Synth() {}
-    virtual float update();
+  virtual ~Synth() {}
+  virtual float update();
 
-    unsigned sr = 44100;
+  unsigned sr = 44100;
 
-    ADSR adsr;
-    AR ar;
-    HPF hpf;
-    Kbd kbd;
-    LFO lfo;
-    Mix mix;
-    Noise noise;
-    SH sh;
-    VCA vca;
-    VCF vcf;
-    VCO1 vco1;
-    VCO2 vco2;
+  ADSR adsr;
+  AR ar;
+  HPF hpf;
+  Kbd kbd;
+  LFO lfo;
+  Mix mix;
+  Noise noise;
+  SH sh;
+  VCA vca;
+  VCF vcf;
+  VCO1 vco1;
+  VCO2 vco2;
 };
