@@ -16,7 +16,7 @@ void Synth::update_vcf() {
   auto env3 = vcf.env * (vcf.env_adsr ? adsr.out : ar.out);
   auto env =
       (env1 + env2 + env3) / std::max(1.f, vcf.mod1 + vcf.mod2 + vcf.env);
-  auto cutoff = (env + (1 - vcf.env)) * vcf.cutoff;
+  auto cutoff = (1 + env / 2) * vcf.cutoff;
 
   // Non-Linear Digital Implementation of the Moog Ladder Filter
   // https://web.archive.org/web/20060501012842/http://dafx04.na.infn.it/WebProc/Proc/P_061.pdf
