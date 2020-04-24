@@ -14,7 +14,6 @@ struct VCF {
   bool env_adsr = true;
 
   // internal
-  float _2vt = 2 * 0.025; // Vt = 25mV
   float a = 0;
   float a_tanh = 0;
   float b = 0;
@@ -23,6 +22,7 @@ struct VCF {
   float c_tanh = 0;
   float d = 0;
   float d_tanh = 0;
+  float e = 0;
 
   // out
   float out = 0;
