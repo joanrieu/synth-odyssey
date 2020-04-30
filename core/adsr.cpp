@@ -6,44 +6,46 @@
 
 #include "synth.hpp"
 
+static constexpr auto epsilon = .001f;
+
 void Synth::update_adsr() {
-  auto auto_trigger = (adsr.kbd_repeat and kbd.gate and lfo.trigger) or
-                      (not adsr.kbd_repeat and lfo.trigger);
-  auto trigger = (adsr.kbd_trigger and kbd.trigger) or
-                 (not adsr.kbd_trigger and auto_trigger);
+  const bool trigger = adsr.kbd_trigger ? kbd.trigger : lfo.trigger;
+  const bool gate = adsr.kbd_repeat and kbd.gate;
 
   if (trigger) {
-    adsr.phase = ADSR::ATTACK;
+    if (adsr.attack > epsilon or adsr.decay > epsilon)
+      adsr.phase = ADSR::ATTACK;
+    else
+      adsr.phase = ADSR::DECAY_AND_SUSTAIN;
   }
 
-  float target = adsr.phase == ADSR::RELEASE
-                     ? 0
-                     : adsr.phase == ADSR::DECAY ? adsr.sustain : 1;
-  bool target_reached = std::abs(adsr.out - target) < 0.05;
-
-  if (target_reached) {
-    if (not adsr.kbd_trigger or not kbd.gate) {
-      adsr.phase = ADSR::RELEASE;
-      target = 0;
-    } else if (adsr.phase == ADSR::ATTACK) {
-      adsr.phase = ADSR::DECAY;
-    }
+  if (adsr.phase == ADSR::ATTACK and adsr.out > 1 - epsilon) {
+    adsr.phase = ADSR::DECAY_AND_SUSTAIN;
   }
 
+  if (adsr.phase == ADSR::DECAY_AND_SUSTAIN and
+      std::abs(adsr.out - adsr.sustain) < epsilon and not gate) {
+    adsr.phase = ADSR::RELEASE;
+  }
+
+  float target;
   float delay;
 
   switch (adsr.phase) {
-  case ADSR::RELEASE:
-    delay = adsr.release;
+  case ADSR::ATTACK:
+    target = 1;
+    delay = adsr.attack;
     break;
-  case ADSR::DECAY:
+  case ADSR::DECAY_AND_SUSTAIN:
+    target = adsr.sustain;
     delay = adsr.decay;
     break;
-  case ADSR::ATTACK:
-    delay = adsr.attack;
+  case ADSR::RELEASE:
+    target = 0;
+    delay = adsr.release;
     break;
   }
 
-  float coef = std::exp(-3 * M_LN2 / ((delay + 0.01) * sr));
+  float coef = std::exp(-3 * M_LN2 / ((delay + epsilon) * sr));
   adsr.out = coef * adsr.out + (1 - coef) * target;
 }

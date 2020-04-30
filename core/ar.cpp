@@ -6,38 +6,45 @@
 
 #include "synth.hpp"
 
-// derived from update_adsr()
+static constexpr auto epsilon = .001f;
+
 void Synth::update_ar() {
-  auto auto_trigger = (adsr.kbd_repeat and kbd.gate and lfo.trigger) or
-                      (not adsr.kbd_repeat and lfo.trigger);
-  auto trigger =
-      (ar.kbd_trigger and kbd.trigger) or (not ar.kbd_trigger and auto_trigger);
+  const bool trigger = ar.kbd_trigger ? kbd.trigger : lfo.trigger;
+  const bool gate = adsr.kbd_repeat and kbd.gate;
 
   if (trigger) {
-    ar.phase = AR::ATTACK;
-  }
-
-  float target = ar.phase == AR::RELEASE ? 0 : 1;
-  bool target_reached = std::abs(ar.out - target) < 0.05;
-
-  if (target_reached) {
-    if (not ar.kbd_trigger or not kbd.gate) {
+    if (ar.attack > epsilon or ar.release > epsilon)
+      ar.phase = AR::ATTACK;
+    else
       ar.phase = AR::RELEASE;
-      target = 0;
-    }
   }
 
+  if (ar.phase == AR::ATTACK and ar.out > 1 - epsilon) {
+    ar.phase = AR::SUSTAIN;
+  }
+
+  if (ar.phase == AR::SUSTAIN and not gate) {
+    ar.phase = AR::RELEASE;
+  }
+
+  float target;
   float delay;
 
   switch (ar.phase) {
-  case AR::RELEASE:
-    delay = ar.release;
-    break;
   case AR::ATTACK:
+    target = 1;
     delay = ar.attack;
+    break;
+  case AR::SUSTAIN:
+    target = 1;
+    delay = 0;
+    break;
+  case AR::RELEASE:
+    target = 0;
+    delay = ar.release;
     break;
   }
 
-  float coef = std::exp(-3 * M_LN2 / ((delay + 0.01) * sr));
+  float coef = std::exp(-3 * M_LN2 / ((delay + epsilon) * sr));
   ar.out = coef * ar.out + (1 - coef) * target;
 }

@@ -7,7 +7,7 @@ struct AR {
   bool kbd_trigger = true;
 
   // internal
-  enum Phase { ATTACK, RELEASE } phase = RELEASE;
+  enum Phase { ATTACK, SUSTAIN, RELEASE } phase = RELEASE;
 
   // out
   float out = 0;

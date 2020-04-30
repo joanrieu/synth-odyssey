@@ -10,7 +10,7 @@ struct ADSR {
   bool kbd_repeat = true;
 
   // internal
-  enum Phase { ATTACK, DECAY, RELEASE } phase = RELEASE;
+  enum Phase { ATTACK, DECAY_AND_SUSTAIN, RELEASE } phase = RELEASE;
 
   // out
   float out = 0;
