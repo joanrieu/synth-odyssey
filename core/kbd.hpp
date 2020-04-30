@@ -2,7 +2,7 @@
 
 struct Kbd {
   // knobs
-  float freq_target = 0;
+  float freq_target = 440;
   float portamento = 0;
   float transpose = 0;
   float pitch_bend = 0;
